@@ -18,18 +18,32 @@ int ParticleManager::addParticle(float mass, glm::vec2 position, glm::vec2 veloc
 
 // Add random particles
 void ParticleManager::addRandomParticles(unsigned int count) {	
-    	for(int i = 0; i < count; ++i) {
-    		float x = glm::linearRand(-1.f, 1.f);
-    		float y = glm::linearRand(-1.f, 1.f);
+	for(int i = 0; i < count; ++i) {
 
-    		float r = glm::linearRand(0.f, 1.f);
-    		float g = glm::linearRand(0.f, 1.f);
-    		float b = glm::linearRand(0.f, 1.f);
+    /* initialize random seed: */
+    srand (time(NULL));
 
-    		float m = glm::linearRand(0.5f, 2.f);
+    float x = (rand() % 20 - 10) / 10.f;
+    float y = (rand() % 20 - 10) / 10.f;
 
-    		addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(r, g, b));
-    	}
+
+    float r = (rand() % 10) / 10.f;
+    float g = (rand() % 10) / 10.f;
+    float b = (rand() % 10) / 10.f;
+
+    float m = (rand() % 15) / 10.f + 0.5f;
+
+		// float x = glm::linearRand(-1.f, 1.f);
+		// float y = glm::linearRand(-1.f, 1.f);
+
+		// float r = glm::linearRand(0.f, 1.f);
+		// float g = glm::linearRand(0.f, 1.f);
+		// float b = glm::linearRand(0.f, 1.f);
+
+		// float m = glm::linearRand(0.5f, 2.f);
+
+		addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(r, g, b));
+	}
 }
 
 // Add force to a particle
