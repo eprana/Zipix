@@ -23,6 +23,10 @@ static const Uint32 WINDOW_HEIGHT = 1024;
 
 using namespace imac3;
 
+
+/* ParticleGraph */
+typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
+
 ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t discFactor, ParticleManager& particleManager) {
     glm::vec2 AB = B - A;
     glm::vec2 step = glm::vec2(AB[0]/discFactor, AB[1]/discFactor);
@@ -51,6 +55,7 @@ ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t d
     return graph;
 }
 
+// Add a particle to the Snake
 void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& particleManager, ParticleManager& snakeManager) {
     id = snakeManager.addParticle(particleManager.getParticleMass(id), 
                                     particleManager.getParticlePosition(id),
@@ -62,10 +67,10 @@ void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& particleM
     std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
     graph.push_back(pair);
 
-    particleManager.addRandomParticles(1);
 }
 
 
+// Check if the snake is outside
 bool isOutside(ParticleManager& snakeManager) {
     for(int  i = 0; i < snakeManager.getCount(); ++i) {
         
@@ -88,56 +93,44 @@ bool isOutside(ParticleManager& snakeManager) {
         if(snakeManager.getParticleY(i) <= -1.f) {
             return true;
         }
-
-        
     }
 
     return false;
-        
 }
 
-bool isCollision(ParticleGraph& graph, ParticleManager& snakeManager, ParticleManager& foodManager) {
+// Check collision between snake and food
+int checkCollision(ParticleManager& snakeManager, ParticleManager& foodManager) {
     for(int i = 0; i < foodManager.getCount(); ++i) {
 
         if(foodManager.getParticleX(i) - 0.05f * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
             && snakeManager.getParticleX(0) <= foodManager.getParticleX(i) + 0.05f * foodManager.getParticleMass(i)
             && foodManager.getParticleY(i) - 0.05f * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
             && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + 0.05f * foodManager.getParticleMass(i)) {
-            std::cout << "COLLISION" << std::endl;
 
-            addParticletoSnake(graph, i, foodManager, snakeManager);
-        return true;
+            return i;
         }
     }
 
-    return false;
+    return -1;
 }
-
-typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
 
 int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
     wm.setFramerate(30);
 
-    // Manager et Renderer
+    // Managers et Renderer
     ParticleRenderer2D renderer;
     ParticleManager snakeManager;
-
     ParticleManager foodManager;
 
-
-
-    //particleManager.addParticle(3.f, glm::vec2(-0.3f, -0.3f), glm::vec2(0.f, 0.f), glm::vec2(0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));  
-    // particleManager.addParticle(3.f, glm::vec2(0.3f, -0.3f), glm::vec2(0.f, 0.f), glm::vec2(0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
-    // particleManager.addParticle(3.f, glm::vec2(0.f, 0.3f), glm::vec2(0.f, 0.f), glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, 1.f));
+    int score = 0;
 
     // Forces
     GraphHookForce graphHook = GraphHookForce(1.f, 0.15f/4.f);
     GraphBrakeForce graphBrake = GraphBrakeForce(0.3f, 0.0001f); // 0.5 = viscosité max 
     
     // // Ajout des particules
-    //particleManager.addCircleParticles(0.5f, 300);
-    foodManager.addRandomParticles(2);
+    foodManager.addRandomParticles(1);
 
     // Forces
     //ConstantForce mg(glm::vec2(0.f, -0.01f));
@@ -146,7 +139,7 @@ int main() {
     LeapfrogSolver leapfrog;
 
     // Snake's creation
-    ParticleGraph particleGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(1.f, 0.f, 0.f), 4.f, snakeManager);
+    ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(1.f, 0.f, 0.f), 4.f, snakeManager);
     
 
     // Temps s'écoulant entre chaque frame
@@ -162,11 +155,11 @@ int main() {
         foodManager.drawParticles(renderer);
 
         snakeManager.drawParticles(renderer);
-        snakeManager.drawParticleGraph(particleGraph, renderer);
+        snakeManager.drawParticleGraph(snakeGraph, renderer);
 
         // Forces
-        graphHook.setGraph(&particleGraph);
-        graphBrake.setGraph(&particleGraph);
+        graphHook.setGraph(&snakeGraph);
+        graphBrake.setGraph(&snakeGraph);
         
 
         // Simulation
@@ -174,12 +167,17 @@ int main() {
 
             // Collision
             if(isOutside(snakeManager)) {
-                std::cout << "YOU LOST ! " << std::endl;
+                std::cout << "YOUR SCORE : "  << score << std::endl;
                 snakeManager.clear();
                 return EXIT_SUCCESS;
             }
 
-            isCollision(particleGraph, snakeManager, foodManager);
+            int idCollision = checkCollision(snakeManager, foodManager);
+            if( idCollision != -1) {
+                addParticletoSnake(snakeGraph, idCollision, foodManager, snakeManager);
+                foodManager.addRandomParticles(1);
+                score += snakeManager.getCount();
+            }
 
             graphBrake.setDt(dt);
             graphHook.apply(snakeManager);
