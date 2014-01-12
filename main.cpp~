@@ -1,0 +1,102 @@
+#include <iostream>
+#include <cstdlib>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/random.hpp>
+
+#include "renderer/WindowManager.hpp"
+#include "renderer/ParticleRenderer2D.hpp"
+
+#include <vector>
+
+static const Uint32 WINDOW_WIDTH = 1024;
+static const Uint32 WINDOW_HEIGHT = 1024;
+
+using namespace imac3;
+
+class StaticParticleManager {
+    std::vector<glm::vec2> m_PositionArray;
+    std::vector<float> m_MassArray;
+    std::vector<glm::vec3> m_ColorArray;
+
+public:
+    void addCircleParticles(float radius, uint32_t count) {
+        float delta = 2 * 3.14f / count; // 2pi / nombre de particules
+        for(size_t i = 0; i < count; ++i) {
+            float c = cos(i * delta), s = sin(i * delta);
+            addParticle(glm::vec2(radius * c, radius * s), 1.f, glm::vec3(c, s, c * s));
+        }
+    }
+
+    void addParticle(glm::vec2 position, float mass, glm::vec3 color) {
+        m_PositionArray.push_back(position);
+        m_MassArray.push_back(mass);
+        m_ColorArray.push_back(color);
+    }
+
+    void drawParticles(ParticleRenderer2D& renderer) {
+        renderer.drawParticles(m_PositionArray.size(),
+                               &m_PositionArray[0],
+                               &m_MassArray[0],
+                               &m_ColorArray[0]);
+    }
+
+    void move(float maxDist) {
+        for(uint32_t i = 0; i < m_PositionArray.size(); ++i) {
+            m_PositionArray[i] += glm::diskRand(maxDist);
+        }
+    }
+    
+    void addRandomParticles(unsigned int count) {	
+	for(int i = 0; i < count; ++i) {
+		float x = glm::linearRand(-1, 1);
+		float y = glm::linearRand(-1, 1);
+		addParticle(glm::vec2(x, y), 1.f, glm::vec3(0, 0, 1));
+	}
+    }
+};
+
+int main() {
+    WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Newton was a Geek");
+    wm.setFramerate(30);
+
+    ParticleRenderer2D renderer;
+
+    // Création des particules
+    StaticParticleManager particleManager;
+    particleManager.addParticle(glm::vec2(0, 0), 1, glm::vec3(1, 1, 1));
+    //particleManager.addCircleParticles(0.5f, 300);
+    particleManager.addRandomParticles(300);
+
+    // Temps s'écoulant entre chaque frame
+    float dt = 0.f;
+
+	bool done = false;
+    while(!done) {
+        wm.startMainLoop();
+
+        // Rendu
+        renderer.clear();
+        particleManager.drawParticles(renderer);
+
+        // Simulation
+        particleManager.move(dt * 0.05f);
+
+        // Gestion des evenements
+		SDL_Event e;
+        while(wm.pollEvent(e)) {
+			switch(e.type) {
+				default:
+					break;
+				case SDL_QUIT:
+					done = true;
+					break;
+			}
+		}
+
+        // Mise à jour de la fenêtre
+        dt = wm.update();
+	}
+
+	return EXIT_SUCCESS;
+}
