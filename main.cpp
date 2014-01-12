@@ -23,49 +23,6 @@ static const Uint32 WINDOW_HEIGHT = 1024;
 
 using namespace imac3;
 
-/* ParticleManager */
-// class StaticParticleManager {
-//     std::vector<glm::vec2> m_PositionArray;
-//     std::vector<float> m_MassArray;
-//     std::vector<glm::vec3> m_ColorArray;
-
-// public:
-//     void addCircleParticles(float radius, uint32_t count) {
-//         float delta = 2 * 3.14f / count; // 2pi / nombre de particules
-//         for(size_t i = 0; i < count; ++i) {
-//             float c = cos(i * delta), s = sin(i * delta);
-//             addParticle(glm::vec2(radius * c, radius * s), 1.f, glm::vec3(c, s, c * s));
-//         }
-//     }
-
-//     void addParticle(glm::vec2 position, float mass, glm::vec3 color) {
-//         m_PositionArray.push_back(position);
-//         m_MassArray.push_back(mass);
-//         m_ColorArray.push_back(color);
-//     }
-
-//     void drawParticles(ParticleRenderer2D& renderer) {
-//         renderer.drawParticles(m_PositionArray.size(),
-//                                &m_PositionArray[0],
-//                                &m_MassArray[0],
-//                                &m_ColorArray[0]);
-//     }
-
-//     void move(float maxDist) {
-//         for(uint32_t i = 0; i < m_PositionArray.size(); ++i) {
-//             m_PositionArray[i] += glm::diskRand(maxDist);
-//         }
-//     }
-    
-//     void addRandomParticles(unsigned int count) {	
-//     	for(int i = 0; i < count; ++i) {
-//     		float x = glm::linearRand(-1.f, 1.f);
-//     		float y = glm::linearRand(-1.f, 1.f);
-//     		addParticle(glm::vec2(x, y), 1.f, glm::vec3(0, 0, 1));
-//     	}
-//     }
-// };
-
 ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t discFactor, ParticleManager& particleManager) {
     glm::vec2 AB = B - A;
     glm::vec2 step = glm::vec2(AB[0]/discFactor, AB[1]/discFactor);
@@ -94,8 +51,22 @@ ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t d
     return graph;
 }
 
+void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& particleManager, ParticleManager& snakeManager) {
+    id = snakeManager.addParticle(particleManager.getParticleMass(id), 
+                                    particleManager.getParticlePosition(id),
+                                    particleManager.getParticleVelocity(id),
+                                    particleManager.getParticleForce(id),
+                                    particleManager.getParticleColor(id));
 
-bool isCollision(ParticleManager& snakeManager) {
+    particleManager.clear();
+    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
+    graph.push_back(pair);
+
+    particleManager.addRandomParticles(1);
+}
+
+
+bool isOutside(ParticleManager& snakeManager) {
     for(int  i = 0; i < snakeManager.getCount(); ++i) {
         
         //Right
@@ -123,6 +94,23 @@ bool isCollision(ParticleManager& snakeManager) {
 
     return false;
         
+}
+
+bool isCollision(ParticleGraph& graph, ParticleManager& snakeManager, ParticleManager& foodManager) {
+    for(int i = 0; i < foodManager.getCount(); ++i) {
+
+        if(foodManager.getParticleX(i) - 0.05f * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
+            && snakeManager.getParticleX(0) <= foodManager.getParticleX(i) + 0.05f * foodManager.getParticleMass(i)
+            && foodManager.getParticleY(i) - 0.05f * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
+            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + 0.05f * foodManager.getParticleMass(i)) {
+            std::cout << "COLLISION" << std::endl;
+
+            addParticletoSnake(graph, i, foodManager, snakeManager);
+        return true;
+        }
+    }
+
+    return false;
 }
 
 typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
@@ -174,7 +162,7 @@ int main() {
         foodManager.drawParticles(renderer);
 
         snakeManager.drawParticles(renderer);
-        //snakeManager.drawParticleGraph(particleGraph, renderer);
+        snakeManager.drawParticleGraph(particleGraph, renderer);
 
         // Forces
         graphHook.setGraph(&particleGraph);
@@ -185,12 +173,13 @@ int main() {
         if(dt != 0) {
 
             // Collision
-            if(isCollision(snakeManager)) {
+            if(isOutside(snakeManager)) {
                 std::cout << "YOU LOST ! " << std::endl;
                 snakeManager.clear();
                 return EXIT_SUCCESS;
             }
 
+            isCollision(particleGraph, snakeManager, foodManager);
 
             graphBrake.setDt(dt);
             graphHook.apply(snakeManager);
