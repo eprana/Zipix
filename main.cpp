@@ -23,6 +23,12 @@ static const Uint32 WINDOW_HEIGHT = 1024;
 
 using namespace imac3;
 
+typedef enum {
+    SNAKE_UP,
+    SNAKE_DOWN,
+    SNAKE_RIGHT, 
+    SNAKE_LEFT
+} SnakeDirection;
 
 /* ParticleGraph */
 typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
@@ -99,13 +105,13 @@ bool isOutside(ParticleManager& snakeManager) {
 }
 
 // Check collision between snake and food
-int checkCollision(ParticleManager& snakeManager, ParticleManager& foodManager) {
-    for(int i = 0; i < foodManager.getCount(); ++i) {
+int checkCollision(ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
+    for(int i = init; i < foodManager.getCount(); ++i) {
 
-        if(foodManager.getParticleX(i) - 0.05f * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
-            && snakeManager.getParticleX(0) <= foodManager.getParticleX(i) + 0.05f * foodManager.getParticleMass(i)
-            && foodManager.getParticleY(i) - 0.05f * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
-            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + 0.05f * foodManager.getParticleMass(i)) {
+        if(foodManager.getParticleX(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
+            && snakeManager.getParticleX(0) <= foodManager.getParticleX(i) + step * foodManager.getParticleMass(i)
+            && foodManager.getParticleY(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
+            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + step* foodManager.getParticleMass(i)) {
 
             return i;
         }
@@ -114,23 +120,33 @@ int checkCollision(ParticleManager& snakeManager, ParticleManager& foodManager) 
     return -1;
 }
 
-typedef enum {
-    SNAKE_UP,
-    SNAKE_DOWN,
-    SNAKE_RIGHT, 
-    SNAKE_LEFT
-} SnakeDirection;
+// Check collision between snake and food
+int checkCollision2(ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
+    for(int i = init; i < foodManager.getCount() - 1; ++i) {
+
+        if(foodManager.getParticleX(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
+            && snakeManager.getParticleX(0) <= foodManager.getParticleX(i) + step * foodManager.getParticleMass(i)
+            && foodManager.getParticleY(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
+            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + step* foodManager.getParticleMass(i)) {
+
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 
 int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
     wm.setFramerate(30);
 
-    // Managers et Renderer
+    // Managers and Renderer
     ParticleRenderer2D renderer;
     ParticleManager snakeManager;
     ParticleManager foodManager;
 
-    int score = 0;
+    
 
     // Forces
     GraphHookForce graphHook = GraphHookForce(1.f, 0.15f/4.f);
@@ -148,9 +164,10 @@ int main() {
     // Snake's creation
     ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(1.f, 0.f, 0.f), 4.f, snakeManager);
     
-    // Constantes
-    float step = 0.04;
-    float viscosity = -0.1;
+    // Variables
+    const float step = 0.04;
+    const float viscosity = -0.1;
+    int score = 0;
     SnakeDirection dir = SNAKE_UP;
 
     // Temps s'écoulant entre chaque frame
@@ -163,8 +180,8 @@ int main() {
         // Renderer
         renderer.clear();
 
+        // Draw particles
         foodManager.drawParticles(renderer);
-
         snakeManager.drawParticles(renderer);
         //snakeManager.drawParticleGraph(snakeGraph, renderer);
 
@@ -190,14 +207,16 @@ int main() {
                 snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
             }
 
-            // Collision
-            if(isOutside(snakeManager)) {
+            // Snake - Window
+            if(isOutside(snakeManager) 
+                || checkCollision2(snakeManager, snakeManager, 0.02f, 1) != -1) {
                 std::cout << "YOUR SCORE : "  << score << std::endl;
                 snakeManager.clear();
                 return EXIT_SUCCESS;
             }
 
-            int idCollision = checkCollision(snakeManager, foodManager);
+            // Snake - Food
+            int idCollision = checkCollision(snakeManager, foodManager, 0.05f, 0);
             if( idCollision != -1) {
                 addParticletoSnake(snakeGraph, idCollision, foodManager, snakeManager);
                 foodManager.addRandomParticles(1);
