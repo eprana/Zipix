@@ -23,15 +23,15 @@ void ParticleManager::addRandomParticles(unsigned int count) {
     /* initialize random seed: */
     srand (time(NULL));
 
-    float x = (rand() % 20 - 10) / 10.f;
-    float y = (rand() % 20 - 10) / 10.f;
+    float x = (rand() % 18 - 9) / 10.f;
+    float y = (rand() % 18 - 9) / 10.f;
 
 
     float r = (rand() % 10) / 10.f;
     float g = (rand() % 10) / 10.f;
     float b = (rand() % 10) / 10.f;
 
-    float m = (rand() % 15) / 10.f + 0.5f;
+    float m = 1.f; //(rand() % 15) / 10.f + 0.5f;
 
 		// float x = glm::linearRand(-1.f, 1.f);
 		// float y = glm::linearRand(-1.f, 1.f);

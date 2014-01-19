@@ -141,7 +141,10 @@ int main() {
     // Snake's creation
     ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(1.f, 0.f, 0.f), 4.f, snakeManager);
     
-
+    // Constantes
+    float step = 0.05;
+    float viscosity = -0.1;
+    
     // Temps s'écoulant entre chaque frame
     float dt = 0.f;
 
@@ -164,6 +167,11 @@ int main() {
 
         // Simulation
         if(dt != 0) {
+
+            // Viscosity 
+            for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
+                snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
+            }
 
             // Collision
             if(isOutside(snakeManager)) {
@@ -209,19 +217,19 @@ int main() {
                 // Déplacement
                 case SDL_KEYDOWN:
                     if(e.key.keysym.sym == SDLK_LEFT) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(-0.03f, 0.f);
+                        snakeManager.getParticleVelocity(0) = glm::vec2(-step, 0.f);
                         break;
                 	}
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(0.03f, 0.f);
+                        snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
                         break;
                     }
                     else if(e.key.keysym.sym == SDLK_UP) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(0.f, 0.03f);
+                        snakeManager.getParticleVelocity(0) = glm::vec2(0.f, step);
                         break;
                     }
                     else if(e.key.keysym.sym == SDLK_DOWN) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(0.f, -0.03f);
+                        snakeManager.getParticleVelocity(0) = glm::vec2(0.f, -step);
                         break;
                     }
                     break;
