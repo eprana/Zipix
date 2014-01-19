@@ -114,6 +114,13 @@ int checkCollision(ParticleManager& snakeManager, ParticleManager& foodManager) 
     return -1;
 }
 
+typedef enum {
+    SNAKE_UP,
+    SNAKE_DOWN,
+    SNAKE_RIGHT, 
+    SNAKE_LEFT
+} SnakeDirection;
+
 int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
     wm.setFramerate(30);
@@ -142,9 +149,10 @@ int main() {
     ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(1.f, 0.f, 0.f), 4.f, snakeManager);
     
     // Constantes
-    float step = 0.05;
+    float step = 0.04;
     float viscosity = -0.1;
-    
+    SnakeDirection dir = SNAKE_UP;
+
     // Temps s'écoulant entre chaque frame
     float dt = 0.f;
 
@@ -158,7 +166,7 @@ int main() {
         foodManager.drawParticles(renderer);
 
         snakeManager.drawParticles(renderer);
-        snakeManager.drawParticleGraph(snakeGraph, renderer);
+        //snakeManager.drawParticleGraph(snakeGraph, renderer);
 
         // Forces
         graphHook.setGraph(&snakeGraph);
@@ -168,9 +176,18 @@ int main() {
         // Simulation
         if(dt != 0) {
 
-            // Viscosity 
-            for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
-                snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
+            // Move
+            if(dir == SNAKE_UP) {
+                snakeManager.getParticleVelocity(0) = glm::vec2(0.f, step);
+            }
+            else if (dir == SNAKE_DOWN) {
+                snakeManager.getParticleVelocity(0) = glm::vec2(0.f, -step);
+            }
+            else if (dir == SNAKE_LEFT) {
+                snakeManager.getParticleVelocity(0) = glm::vec2(-step, 0.f);
+            }
+            else if (dir == SNAKE_RIGHT) {
+                snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
             }
 
             // Collision
@@ -187,16 +204,18 @@ int main() {
                 score += snakeManager.getCount();
             }
 
+            // Apply forces
             graphBrake.setDt(dt);
             graphHook.apply(snakeManager);
             graphBrake.apply(snakeManager);
 
-            // brake.setDt(dt);
-            // hook.apply(particleManager);
-            // brake.apply(particleManager);
 
-            // mg.apply(particleManager);
+            // Viscosity 
+            for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
+                snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
+            }
 
+            // Leapfrog solver
             leapfrog.solve(snakeManager, dt);
         }
         
@@ -217,19 +236,19 @@ int main() {
                 // Déplacement
                 case SDL_KEYDOWN:
                     if(e.key.keysym.sym == SDLK_LEFT) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(-step, 0.f);
+                        dir = SNAKE_LEFT;
                         break;
                 	}
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
+                        dir = SNAKE_RIGHT;
                         break;
                     }
                     else if(e.key.keysym.sym == SDLK_UP) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(0.f, step);
+                        dir = SNAKE_UP;
                         break;
                     }
                     else if(e.key.keysym.sym == SDLK_DOWN) {
-                        snakeManager.getParticleVelocity(0) = glm::vec2(0.f, -step);
+                        dir = SNAKE_DOWN;
                         break;
                     }
                     break;
