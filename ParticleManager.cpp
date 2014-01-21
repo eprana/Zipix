@@ -6,12 +6,13 @@
 namespace imac3 {
 
 // Add a particle to the ParticleManager
-int ParticleManager::addParticle(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color) {
+int ParticleManager::addParticle(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color, Type type) {
 	massArray.push_back(mass);
 	positionArray.push_back(position);
 	velocityArray.push_back(velocity);
 	forceArray.push_back(force);
 	colorArray.push_back(color);
+  typeArray.push_back(type);
 
 	return massArray.size() -1;
 }
@@ -33,18 +34,27 @@ void ParticleManager::addRandomParticles(unsigned int count) {
 
     float m = 1.f; //(rand() % 15) / 10.f + 0.5f;
 
-		// float x = glm::linearRand(-1.f, 1.f);
-		// float y = glm::linearRand(-1.f, 1.f);
-
-		// float r = glm::linearRand(0.f, 1.f);
-		// float g = glm::linearRand(0.f, 1.f);
-		// float b = glm::linearRand(0.f, 1.f);
-
-		// float m = glm::linearRand(0.5f, 2.f);
-
 		addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(r, g, b));
 	}
 }
+
+// Add random particle
+int ParticleManager::addRandomParticle(int random, Type type) {  
+    srand (time(NULL)*random);
+
+    float x = (rand() % 18 - 9) / 10.f;
+    float y = (rand() % 18 - 9) / 10.f;
+
+
+    float r = (rand() % 10) / 10.f;
+    float g = (rand() % 10) / 10.f;
+    float b = (rand() % 10) / 10.f;
+
+    float m = 1.f;
+
+    return addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(r, g, b), type);
+}
+
 
 // Add force to a particle
 void ParticleManager::addForceToParticle(int id, glm::vec2 force) {
