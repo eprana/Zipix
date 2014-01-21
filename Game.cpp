@@ -32,14 +32,14 @@ namespace imac3 {
 	}
 
 	// Add a particle to the Snake
-	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& particleManager, ParticleManager& snakeManager) {
-	    id = snakeManager.addParticle(particleManager.getParticleMass(id), 
-	                                    particleManager.getParticlePosition(id),
-	                                    particleManager.getParticleVelocity(id),
-	                                    particleManager.getParticleForce(id),
-	                                    particleManager.getParticleColor(id));
+	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& foodManager, ParticleManager& snakeManager) {
+	    id = snakeManager.addParticleToHead(foodManager.getParticleMass(id), 
+	                                    foodManager.getParticlePosition(id),
+	                                    foodManager.getParticleVelocity(id),
+	                                    foodManager.getParticleForce(id),
+	                                    foodManager.getParticleColor(id));
 
-	    particleManager.clear();
+	    foodManager.clear();
 	    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
 	    graph.push_back(pair);
 

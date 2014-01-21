@@ -18,7 +18,7 @@
 #include <vector>
 
 static const Uint32 WINDOW_WIDTH = 1024;
-static const Uint32 WINDOW_HEIGHT = 1024;
+static const Uint32 WINDOW_HEIGHT = 768;
 
 using namespace imac3;
 
