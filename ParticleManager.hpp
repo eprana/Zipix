@@ -10,15 +10,23 @@ namespace imac3 {
 
 typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
 
+const glm::vec3 snakeColor = glm::vec3(0.4f, 0.8f, 0.2f);
+const glm::vec3 headColor = glm::vec3(0.2f, 0.6f, 0.2f);
+const glm::vec3 foodColor = glm::vec3(0.2f, 0.2f, 0.6f);
+const glm::vec3 bonusColor = glm::vec3(0.f, 1.f, 0.f);
+const glm::vec3 speedColor = glm::vec3(0.f, 1.f, 0.f);
+const glm::vec3 malusColor =  glm::vec3(0.f, 1.f, 0.f);
+
 class ParticleManager {
 
 	public:
 
 		typedef enum {
-			P_SNAKE,
-			P_FOOD,
-			P_BONUS,
-			P_MALUS
+			P_SNAKE = 0,
+			P_FOOD = 1,
+			P_BONUS = 2,
+			P_SPEED = 3,
+			P_MALUS	= 4
 		} Type;
 
 		/* Getters & Setters */

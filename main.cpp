@@ -6,8 +6,6 @@
 
 #include "Game.hpp"
 #include "renderer/WindowManager.hpp"
-#include "renderer/ParticleRenderer2D.hpp"
-#include "ParticleManager.hpp"
 #include "ConstantForce.hpp"
 #include "PolygonForce.hpp"
 #include "HookForce.hpp"
@@ -104,7 +102,7 @@ int main() {
 
             // Bonus
             if(bonus == 5) {
-                bonusManager.addRandomParticle(3, ParticleManager::Type::P_BONUS);
+                addBonus(bonusManager);
                 bonus++;
             }
 
@@ -118,10 +116,8 @@ int main() {
 
             // Bonus - Window
             if(isOutside(bonusManager)) {
-                std::cout << isOutside(bonusManager) << std::endl;
                 bonusManager.clear();
                 bonus = 0;
-                std::cout << "OUTSIDE" << std::endl;
             }
 
             // Snake - Food
@@ -150,6 +146,9 @@ int main() {
             // Viscosity 
             for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
                 snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
+            }
+            for(int i = 0; i < bonusManager.getCount() - 1; ++i) {
+                bonusManager.addForceToParticle(i, bonusManager.getParticleVelocity(i) * viscosity);
             }
 
             // Leapfrog solver

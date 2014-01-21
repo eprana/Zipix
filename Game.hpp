@@ -13,6 +13,9 @@ namespace imac3 {
 	// Add a particle to the Snake
 	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& particleManager, ParticleManager& snakeManager);
 	
+	// Create bonus
+	void addBonus(ParticleManager& bonusManager);
+
 	// Check if the snake is outside
 	bool isOutside(ParticleManager& snakeManager);
 

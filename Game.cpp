@@ -37,13 +37,24 @@ namespace imac3 {
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
 	                                    foodManager.getParticleForce(id),
-	                                    glm::vec3(0.4f, 0.8f, 0.2f));
+	                                    snakeColor);
 
 	    foodManager.clear();
 
 	    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
 	    graph.push_back(pair);
-	    snakeManager.getParticleColor(1) = glm::vec3(0.2f, 0.6f, 0.2f);
+	    snakeManager.getParticleColor(1) = headColor;
+
+	}
+
+	// Create bonus
+	void addBonus(ParticleManager& bonusManager) {
+		srand(time(NULL));
+
+		int bonus = rand()%3 + 2;
+		std::cout << bonus << std::endl;
+		bonusManager.addRandomParticle(3, (ParticleManager::Type)bonus);
+
 
 	}
 
