@@ -14,7 +14,18 @@ int ParticleManager::addParticle(float mass, glm::vec2 position, glm::vec2 veloc
 	colorArray.push_back(color);
   typeArray.push_back(type);
 
-	return massArray.size() -1;
+  return massArray.size() -1;
+}
+
+int ParticleManager::addParticleToHead(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color) {
+
+  massArray.insert(massArray.begin(), mass);
+  positionArray.insert(positionArray.begin(), position);
+  velocityArray.insert(velocityArray.begin(), velocity);
+  forceArray.insert(forceArray.begin(), force);
+  colorArray.insert(colorArray.begin(), color);
+
+  return massArray.size() -1;
 }
 
 // Add random particles

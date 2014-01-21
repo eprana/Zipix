@@ -44,6 +44,9 @@ class ParticleManager {
 		// Add a particle to the ParticleManager
 		int addParticle(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force, glm::vec3 color, Type type = Type::P_FOOD);
 
+		// Add a particle in the first position to the ParticleManager
+		int addParticleToHead(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force, glm::vec3 color);
+
 		// Add random particles
 		void addRandomParticles(unsigned int count);
 
