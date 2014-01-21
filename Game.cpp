@@ -1,5 +1,5 @@
 #include "Game.hpp"
-
+#include <iostream>
 namespace imac3 {	
 
 	// Create a particleGraph
@@ -27,7 +27,7 @@ namespace imac3 {
 	  
 	        position += step;
 	    }
-	    particleManager.getParticleColor(0) = glm::vec3(0.f, 0.f, 1.f);
+	    particleManager.getParticleColor(0) = glm::vec3(0.4f, 0.8f, 0.2f);
 	    return graph;
 	}
 
@@ -37,11 +37,13 @@ namespace imac3 {
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
 	                                    foodManager.getParticleForce(id),
-	                                    foodManager.getParticleColor(id));
+	                                    glm::vec3(0.4f, 0.8f, 0.2f));
 
 	    foodManager.clear();
+	    std::cout<<"Particle id"<<id<<std::endl;
 	    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
 	    graph.push_back(pair);
+	    snakeManager.getParticleColor(1) = glm::vec3(0.2f, 0.6f, 0.2f);
 
 	}
 
