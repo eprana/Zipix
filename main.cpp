@@ -34,11 +34,14 @@ int main() {
 
     // Managers and Renderer
     ParticleRenderer2D renderer;
+
     ParticleManager snakeManager;
     ParticleManager redManager;
-    //ParticleManager blueManager;
+    ParticleManager blueManager;
+
     ParticleManager foodManager;
-    // ParticleManager bonusManager;
+    ParticleManager bonusManager;
+
     ParticleManager autoManager;
 
     // Forces
@@ -47,6 +50,12 @@ int main() {
     
     GraphHookForce redGraphHook = GraphHookForce(1.f, 0.15f/4.f);
     GraphBrakeForce redGraphBrake = GraphBrakeForce(0.3f, 0.0001f);
+
+    GraphHookForce blueGraphHook = GraphHookForce(1.f, 0.15f/4.f);
+    GraphBrakeForce blueGraphBrake = GraphBrakeForce(0.3f, 0.0001f);
+
+    // Box
+    Polygon box = buildBox(glm::vec3(1.f, 1.f, 1.f), glm::vec2(-1.f, -1.f), 2, 2, true);
 
     // // Ajout des particules
     int id = foodManager.addRandomParticle(1);
@@ -59,18 +68,23 @@ int main() {
 
     // LeapfrogSolver
     LeapfrogSolver leapfrog;
+    PolygonForce boxForce(box, 1.5f, leapfrog);
 
     // Snake's creation
     ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(0.2f, 0.6f, 0.2f), 4.f, snakeManager);
     ParticleGraph redGraph = createString(glm::vec2(0.f, 0.2f), glm::vec2(0.15f, 0.2f), glm::vec3(0.6f, 0.2f, 0.2f), 4.f, redManager);
-    ParticleGraph autoGraph;
+    ParticleGraph blueGraph = createString(glm::vec2(0.f, -0.2f), glm::vec2(-0.15f, -0.2f), glm::vec3(0.2f, 0.2f, 0.6f), 4.f, blueManager);
+
+    copyParticle(snakeManager, autoManager, 0);
+    copyParticle(redManager, autoManager, 0);
+    copyParticle(blueManager, autoManager, 0);
 
     // Variables
-    const float step = 0.04;
-    const float viscosity = -0.05;
-    const float attractiveCoeff = 5;
+    //const float step = 0.04;
+    //const float viscosity = -0.05;
+
     int score = 0;
-    //int bonus = 0;
+    int bonus = 0;
     //SnakeDirection dir = SNAKE_UP;
 
     // Temps s'écoulant entre chaque frame
@@ -87,27 +101,21 @@ int main() {
         foodManager.drawParticles(renderer);
         snakeManager.drawParticles(renderer);
         redManager.drawParticles(renderer);
-
+        blueManager.drawParticles(renderer);
+        bonusManager.drawParticles(renderer);
 
         //mg.apply(bonusManager);
 
         // Mise à jour du graph autoGraph
         updateParticle(snakeManager, 0, autoManager, 1);
         updateParticle(redManager, 0, autoManager, 2);
+        updateParticle(blueManager, 0, autoManager, 3);
 
         // Force attractive
-        glm::vec2 attractiveForce = foodManager.getParticlePosition(0) - snakeManager.getParticlePosition(0);
-        int d = attractiveForce.length();
-        attractiveForce = glm::normalize(attractiveForce);
- 
-        snakeManager.addForceToParticle(0, glm::vec2(attractiveForce[0]/(attractiveCoeff*d), attractiveForce[1]/(attractiveCoeff*d)));
+        addAttractiveForce(foodManager, snakeManager);
+        addAttractiveForce(foodManager, redManager);
+        addAttractiveForce(foodManager, blueManager);
         
-        glm::vec2 redAttractiveForce = foodManager.getParticlePosition(0) - redManager.getParticlePosition(0);
-        int redDistance = redAttractiveForce.length();
-        redAttractiveForce = glm::normalize(redAttractiveForce);
-        redManager.addForceToParticle(0, glm::vec2(redAttractiveForce[0]/(attractiveCoeff*redDistance), redAttractiveForce[1]/(attractiveCoeff*redDistance)));
-
-
         // Forces
         graphHook.setGraph(&snakeGraph);
         graphBrake.setGraph(&snakeGraph);
@@ -115,6 +123,8 @@ int main() {
         redGraphHook.setGraph(&redGraph);
         redGraphBrake.setGraph(&redGraph);
         
+        blueGraphHook.setGraph(&blueGraph);
+        blueGraphBrake.setGraph(&blueGraph);
 
         // Simulation
         if(dt != 0) {
@@ -133,11 +143,11 @@ int main() {
             //     snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
             // }
 
-            // // Bonus
-            // if(bonus == 5) {
-            //     addBonus(bonusManager);
-            //     bonus++;
-            // }
+            // Bonus
+            if(bonus == 5) {
+                addBonus(bonusManager);
+                bonus++;
+            }
 
             // // Snake - Window
             // if(isOutside(snakeManager) ) {
@@ -154,23 +164,42 @@ int main() {
             // }
 
             // Snake - Food
-            int idCollision = checkFoodCollision(snakeManager, foodManager, 0.05f, 0);
-            if( idCollision != -1) {
-                addParticletoSnake(snakeGraph, idCollision, foodManager, snakeManager);
-                foodManager.addRandomParticle(2);
-                updateParticle(foodManager, 0, autoManager, 0);
-                //bonus++;
-                score += snakeManager.getCount();
-            }
+            if( checkFoodCollision(snakeGraph, snakeManager, foodManager, 0.05f, 0) != -1
+                || checkFoodCollision(redGraph, redManager, foodManager, 0.05f, 0) != -1
+                || checkFoodCollision(blueGraph, blueManager, foodManager, 0.05f, 0) != -1) {
 
-            int redCollision = checkFoodCollision(redManager, foodManager, 0.05f, 0);
-            if( redCollision != -1) {
-                addParticletoSnake(redGraph, redCollision, foodManager, redManager);
-                foodManager.addRandomParticle(2);
+                
                 updateParticle(foodManager, 0, autoManager, 0);
-                //bonus++;
-                score += redManager.getCount();
+                bonus++;
             }
+            
+           
+            // int idCollision = checkFoodCollision(snakeManager, foodManager, 0.05f, 0);
+            // if( idCollision != -1) {
+            //     addParticletoSnake(snakeGraph, idCollision, foodManager, snakeManager);
+            //     foodManager.addRandomParticle(2);
+            //     updateParticle(foodManager, 0, autoManager, 0);
+            //     //bonus++;
+            //     score += snakeManager.getCount();
+            // }
+
+            // int redCollision = checkFoodCollision(redManager, foodManager, 0.05f, 0);
+            // if( redCollision != -1) {
+            //     addParticletoSnake(redGraph, redCollision, foodManager, redManager);
+            //     foodManager.addRandomParticle(2);
+            //     updateParticle(foodManager, 0, autoManager, 0);
+            //     //bonus++;
+            //     score += redManager.getCount();
+            // }
+
+            // int blueCollision = checkFoodCollision(blueManager, foodManager, 0.05f, 0);
+            // if( blueCollision != -1) {
+            //     addParticletoSnake(blueGraph, blueCollision, foodManager, blueManager);
+            //     foodManager.addRandomParticle(2);
+            //     updateParticle(foodManager, 0, autoManager, 0);
+            //     //bonus++;
+            //     score += blueManager.getCount();
+            // }
 
 
             // // Snake - Bonus
@@ -184,6 +213,12 @@ int main() {
             // Apply forces
             graphBrake.setDt(dt);
             redGraphBrake.setDt(dt);
+            blueGraphBrake.setDt(dt);
+            boxForce.setDt(dt);
+
+            boxForce.apply(snakeManager);
+            boxForce.apply(redManager);
+            boxForce.apply(blueManager);
 
             graphHook.apply(snakeManager);
             graphBrake.apply(snakeManager);
@@ -191,16 +226,31 @@ int main() {
             redGraphHook.apply(redManager);
             redGraphBrake.apply(redManager);
 
+            blueGraphHook.apply(blueManager);
+            blueGraphBrake.apply(blueManager);
+
 
             // Viscosity 
             // for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
             //     snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
             // }
 
+            if(bonusManager.getCount() > 0) {
+                //for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
+                    glm::vec2 repulse = snakeManager.getParticlePosition(0) - bonusManager.getParticlePosition(0);
+                    int d = repulse.length();
+                    repulse = glm::normalize(repulse);
+                    snakeManager.addForceToParticle(0, glm::vec2(repulse[0]/(d*10), repulse[1]/(d*10)));
+                //}
+            }
+            
+
             // Leapfrog solver
             leapfrog.solve(snakeManager, dt);
             leapfrog.solve(autoManager, dt);
             leapfrog.solve(redManager, dt);
+            leapfrog.solve(blueManager, dt);
+            leapfrog.solve(bonusManager, dt);
         }
         
 

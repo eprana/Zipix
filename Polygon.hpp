@@ -33,7 +33,7 @@ private:
 };
 
 // Build a box
-Polygon builBox(glm::vec3 color, glm::vec2 position, float width, float height, bool isInner = false);
+Polygon buildBox(glm::vec3 color, glm::vec2 position, float width, float height, bool isInner = false);
 
 // Build a circle
 Polygon buildCircle(glm::vec3 color, glm::vec2 center, float radius, size_t discFactor, bool isInner = false);

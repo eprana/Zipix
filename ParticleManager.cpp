@@ -113,10 +113,10 @@ namespace imac3 {
 
 	// Clear Manager
 	void ParticleManager::clear() {
-		massArray = {};
-		positionArray = {};
-		velocityArray = {};
-		forceArray = {};
-		colorArray = {};  
+		massArray.clear();
+		positionArray.clear();
+		velocityArray.clear();
+		forceArray.clear();
+		colorArray.clear(); 
 	}
 }

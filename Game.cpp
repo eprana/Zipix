@@ -52,6 +52,7 @@ namespace imac3 {
 
 	// Add a particle to the Snake
 	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& foodManager, ParticleManager& snakeManager) {
+
 	    id = snakeManager.addParticleToHead(foodManager.getParticleMass(id), 
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
@@ -65,6 +66,17 @@ namespace imac3 {
 	    snakeManager.getParticleColor(1) = snakeManager.getParticleColor(2);
 
 	}
+
+		// Add attractive force
+	void addAttractiveForce(ParticleManager& foodManager, ParticleManager& snakeManager) {
+		int attractiveCoeff = 7;
+		glm::vec2 attractiveForce = foodManager.getParticlePosition(0) - snakeManager.getParticlePosition(0);
+        int d = attractiveForce.length();
+        attractiveForce = glm::normalize(attractiveForce);
+        snakeManager.addForceToParticle(0, glm::vec2(attractiveForce[0]/(attractiveCoeff*d), attractiveForce[1]/(attractiveCoeff*d)));
+        
+	}
+	
 
 	// Create bonus
 	void addBonus(ParticleManager& bonusManager) {
@@ -106,7 +118,7 @@ namespace imac3 {
 	}
 
 	// Check collision between snake and food
-	int checkFoodCollision(ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
+	int checkFoodCollision(ParticleGraph& snakeGraph, ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
 	    for(int i = init; i < foodManager.getCount(); ++i) {
 
 	        if(foodManager.getParticleX(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
@@ -114,7 +126,10 @@ namespace imac3 {
 	            && foodManager.getParticleY(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
 	            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + step* foodManager.getParticleMass(i)) {
 
-	            return i;
+	            addParticletoSnake(snakeGraph, i, foodManager, snakeManager);
+                foodManager.addRandomParticle(snakeManager.getCount());
+
+                return i;
 	        }
 	    }
 
