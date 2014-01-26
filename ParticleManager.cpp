@@ -5,88 +5,118 @@
 
 namespace imac3 {
 
-// Add a particle to the ParticleManager
-int ParticleManager::addParticle(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color) {
-  massArray.push_back(mass);
-  positionArray.push_back(position);
-  velocityArray.push_back(velocity);
-  forceArray.push_back(force);
-  colorArray.push_back(color);
+	// Add a particle to the ParticleManager
+	int ParticleManager::addParticle(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color, Type type) {
+		massArray.push_back(mass);
+		positionArray.push_back(position);
+		velocityArray.push_back(velocity);
+		forceArray.push_back(force);
+		colorArray.push_back(color);
+		typeArray.push_back(type);
 
-  return massArray.size() -1;
-}
-
-int ParticleManager::addParticleToHead(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color) {
-
-  massArray.insert(massArray.begin(), mass);
-  positionArray.insert(positionArray.begin(), position);
-  velocityArray.insert(velocityArray.begin(), velocity);
-  forceArray.insert(forceArray.begin(), force);
-  colorArray.insert(colorArray.begin(), color);
-
-  return massArray.size() -1;
-}
-
-// Add random particles
-void ParticleManager::addRandomParticles(unsigned int count) {	
-	for(int i = 0; i < count; ++i) {
-
-    /* initialize random seed: */
-    srand (time(NULL));
-
-    float x = (rand() % 18 - 9) / 10.f;
-    float y = (rand() % 18 - 9) / 10.f;
-
-
-    float r = (rand() % 10) / 10.f;
-    float g = (rand() % 10) / 10.f;
-    float b = (rand() % 10) / 10.f;
-
-    float m = 1.f; //(rand() % 15) / 10.f + 0.5f;
-
-		// float x = glm::linearRand(-1.f, 1.f);
-		// float y = glm::linearRand(-1.f, 1.f);
-
-		// float r = glm::linearRand(0.f, 1.f);
-		// float g = glm::linearRand(0.f, 1.f);
-		// float b = glm::linearRand(0.f, 1.f);
-
-		// float m = glm::linearRand(0.5f, 2.f);
-
-		addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(r, g, b));
+		return massArray.size() -1;
 	}
-}
 
-// Add force to a particle
-void ParticleManager::addForceToParticle(int id, glm::vec2 force) {
-  getParticleForce(id) += force;
-}
+	int ParticleManager::addParticleToHead(float mass, glm::vec2 position, glm::vec2 velocity, glm::vec2 force , glm::vec3 color) {
 
-// Draw particles
-void ParticleManager::drawParticles(ParticleRenderer2D& renderer) {
-	renderer.drawParticles(positionArray.size(),
-                               &positionArray[0],
-                               &massArray[0],
-                               &colorArray[0]);
-}
+		massArray.insert(massArray.begin(), mass);
+		positionArray.insert(positionArray.begin(), position);
+		velocityArray.insert(velocityArray.begin(), velocity);
+		forceArray.insert(forceArray.begin(), force);
+		colorArray.insert(colorArray.begin(), color);
 
-// Draw particleGraph
-void ParticleManager::drawParticleGraph(ParticleGraph& graph, ParticleRenderer2D& renderer) {
-  renderer.drawLines(graph.size(), 
-                      &graph[0],
-                      getCount(),
-                      &positionArray[0],
-                      &colorArray[0]);
-}
+		return massArray.size() -1;
+	}
 
-// Clear Manager
-void ParticleManager::clear() {
-  massArray = {};
-  positionArray = {};
-  velocityArray = {};
-  forceArray = {};
-  colorArray = {};  
-}
+	// Add random particles
+	void ParticleManager::addRandomParticles(unsigned int count) {	
+		for(int i = 0; i < count; ++i) {
+
+			/* initialize random seed: */
+			srand (time(NULL));
+
+			float x = (rand() % 18 - 9) / 10.f;
+			float y = (rand() % 18 - 9) / 10.f;
 
 
+			float r = (rand() % 10) / 10.f;
+			float g = (rand() % 10) / 10.f;
+			float b = (rand() % 10) / 10.f;
+
+			float m = 1.f; //(rand() % 15) / 10.f + 0.5f;
+
+			addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(r, g, b));
+		}
+	}
+
+	// Add random particle
+	int ParticleManager::addRandomParticle(int random, Type type) {  
+		srand (time(NULL)*random);
+
+		// Position
+		float x = (rand() % 18 - 9) / 10.f;
+		float y = (rand() % 18 - 9) / 10.f;
+
+		// Color
+		glm::vec3 color;
+
+		switch(type) {
+			case Type::P_FOOD:
+				color = foodColor;
+				break;
+
+			case Type::P_SPEED:
+				color = speedColor;
+				break;
+
+			case Type::P_BONUS:
+				color = bonusColor;
+				break;
+
+			case Type::P_MALUS:
+				color = malusColor;
+				break;
+
+			default: 
+				color = glm::vec3((rand() % 10) / 10.f, (rand() % 10) / 10.f, (rand() % 10) / 10.f);
+				break;
+		}  
+
+		// Mass
+		float m = 1.f;
+
+		return addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), color, type);
+	}
+
+
+	// Add force to a particle
+	void ParticleManager::addForceToParticle(int id, glm::vec2 force) {
+		getParticleForce(id) += force;
+	}
+
+	// Draw particles
+	void ParticleManager::drawParticles(ParticleRenderer2D& renderer) {
+		renderer.drawParticles(positionArray.size(),
+		&positionArray[0],
+		&massArray[0],
+		&colorArray[0]);
+	}
+
+	// Draw particleGraph
+	void ParticleManager::drawParticleGraph(ParticleGraph& graph, ParticleRenderer2D& renderer) {
+		renderer.drawLines(graph.size(), 
+		&graph[0],
+		getCount(),
+		&positionArray[0],
+		&colorArray[0]);
+	}
+
+	// Clear Manager
+	void ParticleManager::clear() {
+		massArray = {};
+		positionArray = {};
+		velocityArray = {};
+		forceArray = {};
+		colorArray = {};  
+	}
 }

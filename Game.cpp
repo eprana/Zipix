@@ -14,7 +14,7 @@ namespace imac3 {
 	    unsigned int id = 0;
 
 	    for(int i = 0; i < discFactor + 1; ++i) {
-	        id = particleManager.addParticle(mass, position, glm::vec2(0.f, 0.f), glm::vec2(0.f, 0.f), color);
+	        id = particleManager.addParticle(mass, position, glm::vec2(0.f, 0.f), glm::vec2(0.f, 0.f), color, ParticleManager::Type::P_SNAKE);
 	        if(id != 0) {
 	            std::pair<unsigned int, unsigned int> pair (id, id - 1);
 	            graph.push_back(pair);    
@@ -37,16 +37,26 @@ namespace imac3 {
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
 	                                    foodManager.getParticleForce(id),
-	                                    glm::vec3(0.4f, 0.8f, 0.2f));
+	                                    snakeColor);
 
 	    foodManager.clear();
-	    std::cout<<"Particle id"<<id<<std::endl;
+
 	    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
 	    graph.push_back(pair);
-	    snakeManager.getParticleColor(1) = glm::vec3(0.2f, 0.6f, 0.2f);
+	    snakeManager.getParticleColor(1) = headColor;
 
 	}
 
+	// Create bonus
+	void addBonus(ParticleManager& bonusManager) {
+		srand(time(NULL));
+
+		int bonus = rand()%3 + 2;
+		std::cout << bonus << std::endl;
+		bonusManager.addRandomParticle(3, (ParticleManager::Type)bonus);
+
+
+	}
 
 	// Check if the snake is outside
 	bool isOutside(ParticleManager& snakeManager) {
