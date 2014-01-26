@@ -31,6 +31,25 @@ namespace imac3 {
 	    return graph;
 	}
 
+	// Copy a particle
+	int copyParticle(ParticleManager& sourceManager, ParticleManager& destinationManager, int id) {
+		int newId = destinationManager.addParticle(sourceManager.getParticleMass(id),
+                            sourceManager.getParticlePosition(id),           
+                            sourceManager.getParticleVelocity(id),
+                            sourceManager.getParticleForce(id),
+                            sourceManager.getParticleColor(id));
+
+		return newId;
+	}
+
+	void updateParticle(ParticleManager& sourceManager, int sourceId, ParticleManager& destinationManager, int destinationId) {
+		destinationManager.getParticleMass(destinationId) = sourceManager.getParticleMass(sourceId);
+		destinationManager.getParticlePosition(destinationId) = sourceManager.getParticlePosition(sourceId);
+		destinationManager.getParticleVelocity(destinationId) = sourceManager.getParticleVelocity(sourceId);
+		destinationManager.getParticleForce(destinationId) = sourceManager.getParticleForce(sourceId);
+		destinationManager.getParticleColor(destinationId) = sourceManager.getParticleColor(sourceId);
+	}
+
 	// Add a particle to the Snake
 	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& foodManager, ParticleManager& snakeManager) {
 	    id = snakeManager.addParticleToHead(foodManager.getParticleMass(id), 

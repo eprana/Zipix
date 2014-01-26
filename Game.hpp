@@ -10,6 +10,12 @@ namespace imac3 {
 	// Create a particleGraph
 	ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t discFactor, ParticleManager& particleManager);
 	
+	// Copy a particle
+	int copyParticle(ParticleManager& sourceManager, ParticleManager& destinationManager, int id);
+
+	// Update a particle
+	void updateParticle(ParticleManager& sourceManager, int sourceId, ParticleManager& destinationManager, int destinationId);
+	
 	// Add a particle to the Snake
 	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& particleManager, ParticleManager& snakeManager);
 	
