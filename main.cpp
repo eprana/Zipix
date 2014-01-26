@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 
+#include <GL/freeglut.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 
@@ -100,7 +102,7 @@ int main() {
 
             // Snake - Window
             if(isOutside(snakeManager) 
-                || checkSnakeCollision(snakeManager, snakeManager, 0.02f, 1) != -1) {
+                || checkSnakeCollision(snakeManager, snakeManager, 0.02f, 2) != -1) {
                 std::cout << "YOUR SCORE : "  << score << std::endl;
                 snakeManager.clear();
                 return EXIT_SUCCESS;
