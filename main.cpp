@@ -1,8 +1,6 @@
 #include <iostream>
 #include <cstdlib>
 
-#include <GL/freeglut.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 
@@ -31,9 +29,9 @@ typedef enum {
 
 
 int main() {
-    WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
+    WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "ZIPIX");
     wm.setFramerate(30);
-
+    
     // Managers and Renderer
     ParticleRenderer2D renderer;
     ParticleManager snakeManager;
@@ -42,7 +40,7 @@ int main() {
 
     // Forces
     GraphHookForce graphHook = GraphHookForce(1.f, 0.15f/4.f);
-    GraphBrakeForce graphBrake = GraphBrakeForce(0.3f, 0.0001f); // 0.5 = viscosité max 
+    GraphBrakeForce graphBrake = GraphBrakeForce(0.3f, 10.f); // 0.5 = viscosité max 
     
     // // Ajout des particules
     foodManager.addRandomParticle(1);
@@ -144,7 +142,6 @@ int main() {
             graphHook.apply(snakeManager);
             graphBrake.apply(snakeManager);
 
-
             // Viscosity 
             for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
                 snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
@@ -158,7 +155,6 @@ int main() {
             leapfrog.solve(bonusManager, dt);
         }
         
-
         // Gestion des evenements
 		SDL_Event e;
         while(wm.pollEvent(e)) {
