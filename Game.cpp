@@ -56,13 +56,13 @@ namespace imac3 {
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
 	                                    foodManager.getParticleForce(id),
-	                                    snakeColor);
+	                                    headColor);
 
 	    foodManager.clear();
 
 	    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
 	    graph.push_back(pair);
-	    snakeManager.getParticleColor(1) = headColor;
+	    snakeManager.getParticleColor(1) = snakeManager.getParticleColor(2);
 
 	}
 
