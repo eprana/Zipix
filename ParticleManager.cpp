@@ -91,7 +91,7 @@ namespace imac3 {
 			float c = cos(i * delta);
 			float s = sin(i * delta);
 
-			addParticle(1.f, position, glm::vec2(0, 0), glm::vec2(c/5, s/5), color);
+			addParticle(0.5f, position, glm::vec2(0, 0), glm::vec2(c/5, s/5), color);
 		}
 	}
 
