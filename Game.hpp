@@ -22,6 +22,9 @@ namespace imac3 {
 	// Add attractive force
 	void addAttractiveForce(ParticleManager& foodManager, ParticleManager& snakeManager);
 
+	// Add repulsive force
+	void addRepulsiveForce(ParticleManager& repulsiveManager, ParticleManager& snakeManager);
+
 	// Create bonus
 	void addBonus(ParticleManager& bonusManager);
 
@@ -29,7 +32,7 @@ namespace imac3 {
 	bool isOutside(ParticleManager& snakeManager);
 
 	// Check collision between snake and food
-	int checkFoodCollision(ParticleGraph& snakeGraph, ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init);
+	int checkFoodCollision(ParticleGraph& snakeGraph, ParticleManager& snakeManager, ParticleManager& foodManager, ParticleManager& fireworkManager, float step, int init);
 	
 	// Check collision between snake and snake
 	int checkSnakeCollision(ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init);

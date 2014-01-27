@@ -13,7 +13,7 @@ typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
 const glm::vec3 snakeColor = glm::vec3(0.2f, 0.6f, 0.2f);
 const glm::vec3 headColor = glm::vec3(0.4f, 0.8f, 0.2f); 
 const glm::vec3 foodColor = glm::vec3(0.2f, 0.2f, 0.6f);
-const glm::vec3 bonusColor = glm::vec3(0.f, 1.f, 0.f);
+const glm::vec3 bonusColor = glm::vec3(1.f, 0.f, 0.f);
 const glm::vec3 speedColor = glm::vec3(0.f, 1.f, 0.f);
 const glm::vec3 malusColor =  glm::vec3(0.f, 1.f, 0.f);
 
@@ -25,8 +25,6 @@ class ParticleManager {
 			P_SNAKE = 0,
 			P_FOOD = 1,
 			P_BONUS = 2,
-			P_SPEED = 3,
-			P_MALUS	= 4
 		} Type;
 
 		/* Getters & Setters */
@@ -60,6 +58,9 @@ class ParticleManager {
 
 		// Add random particle
 		int addRandomParticle(int random, Type type = P_FOOD);
+
+		// Add random particle in a specific position 
+		void addCircleParticlesAtPosition(int random, glm::vec2 position, glm::vec3 color, int count);
 
 		// Add force to a particle
 		void addForceToParticle(int id, glm::vec2 force);
