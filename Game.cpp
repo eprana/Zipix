@@ -31,21 +31,52 @@ namespace imac3 {
 	    return graph;
 	}
 
+	// Copy a particle
+	int copyParticle(ParticleManager& sourceManager, ParticleManager& destinationManager, int id) {
+		int newId = destinationManager.addParticle(sourceManager.getParticleMass(id),
+                            sourceManager.getParticlePosition(id),           
+                            sourceManager.getParticleVelocity(id),
+                            sourceManager.getParticleForce(id),
+                            sourceManager.getParticleColor(id));
+
+		return newId;
+	}
+
+	void updateParticle(ParticleManager& sourceManager, int sourceId, ParticleManager& destinationManager, int destinationId) {
+		destinationManager.getParticleMass(destinationId) = sourceManager.getParticleMass(sourceId);
+		destinationManager.getParticlePosition(destinationId) = sourceManager.getParticlePosition(sourceId);
+		destinationManager.getParticleVelocity(destinationId) = sourceManager.getParticleVelocity(sourceId);
+		destinationManager.getParticleForce(destinationId) = sourceManager.getParticleForce(sourceId);
+		destinationManager.getParticleColor(destinationId) = sourceManager.getParticleColor(sourceId);
+	}
+
 	// Add a particle to the Snake
 	void addParticletoSnake(ParticleGraph& graph, int id, ParticleManager& foodManager, ParticleManager& snakeManager) {
+
 	    id = snakeManager.addParticleToHead(foodManager.getParticleMass(id), 
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
 	                                    foodManager.getParticleForce(id),
-	                                    snakeColor);
+	                                    headColor);
 
 	    foodManager.clear();
 
 	    std::pair<unsigned int, unsigned int> pair (id, snakeManager.getCount() - 2);
 	    graph.push_back(pair);
-	    snakeManager.getParticleColor(1) = headColor;
+	    snakeManager.getParticleColor(1) = snakeManager.getParticleColor(2);
 
 	}
+
+		// Add attractive force
+	void addAttractiveForce(ParticleManager& foodManager, ParticleManager& snakeManager) {
+		int attractiveCoeff = 7;
+		glm::vec2 attractiveForce = foodManager.getParticlePosition(0) - snakeManager.getParticlePosition(0);
+        int d = attractiveForce.length();
+        attractiveForce = glm::normalize(attractiveForce);
+        snakeManager.addForceToParticle(0, glm::vec2(attractiveForce[0]/(attractiveCoeff*d), attractiveForce[1]/(attractiveCoeff*d)));
+        
+	}
+	
 
 	// Create bonus
 	void addBonus(ParticleManager& bonusManager) {
@@ -87,7 +118,7 @@ namespace imac3 {
 	}
 
 	// Check collision between snake and food
-	int checkFoodCollision(ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
+	int checkFoodCollision(ParticleGraph& snakeGraph, ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
 	    for(int i = init; i < foodManager.getCount(); ++i) {
 
 	        if(foodManager.getParticleX(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
@@ -95,7 +126,10 @@ namespace imac3 {
 	            && foodManager.getParticleY(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
 	            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + step* foodManager.getParticleMass(i)) {
 
-	            return i;
+	            addParticletoSnake(snakeGraph, i, foodManager, snakeManager);
+                foodManager.addRandomParticle(snakeManager.getCount());
+
+                return i;
 	        }
 	    }
 

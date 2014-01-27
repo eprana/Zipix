@@ -52,7 +52,7 @@ namespace imac3 {
 }
 
 	// Build a box
-	Polygon builBox(glm::vec3 color, glm::vec2 position, float width, float height, bool isInner) {
+	Polygon buildBox(glm::vec3 color, glm::vec2 position, float width, float height, bool isInner) {
 		std::vector<glm::vec2> pointArray;
 
 		// Coin inférieur gauche = position : 

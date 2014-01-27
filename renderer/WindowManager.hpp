@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+
 #include "GLtools.hpp"
 
 namespace imac3 {
@@ -19,6 +20,8 @@ public:
 
     void loadText();
 
+    void drawText();
+
     bool pollEvent(SDL_Event& e) const {
         return SDL_PollEvent(&e);
     }
@@ -27,8 +30,7 @@ public:
     // A appeler en début de boucle de rendu
     void startMainLoop() {
         m_nStartTime = SDL_GetTicks();
-        //glBindTexture(GL_TEXTURE_2D, textureText);
-        //SDL_GL_SwapBuffers();
+        //drawText();
     }
 
     // Met à jour la fenetre et renvoit le temps écoulé depuis le dernier appel à startMainLoop (en secondes)
@@ -39,6 +41,8 @@ public:
         m_nFrameDuration = 1000.f / m_nFPS;
     }
 private:
+    static const GLchar *TEXT_VERTEX_SHADER, *TEXT_FRAGMENT_SHADER;
+
     uint32_t m_nFPS;
     uint32_t m_nFrameDuration;
 
@@ -50,7 +54,8 @@ private:
     SDL_Rect position;
     SDL_Color white;
     GLuint textureText;
-    int largeurTexte, hauteurTexte;
+    GLuint m_TextProgramID;
+    GLuint m_uTextureSampler;
 
 };
 
