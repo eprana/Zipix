@@ -39,23 +39,38 @@ int main() {
 
     // ----- Fmod test ----- 
     FMOD_SYSTEM *system;
-    FMOD_SOUND *test;
-    
-    FMOD_RESULT resultat;
 
     /* Création et initialisation d'un objet système */
     FMOD_System_Create(&system);
-    FMOD_System_Init(system, 1, FMOD_INIT_NORMAL, NULL);
-    
-    /* Chargement du son et vérification du chargement */
-    resultat = FMOD_System_CreateSound(system, "../music/Timer.mp3", FMOD_CREATESAMPLE, 0, &test);
-    if (resultat != FMOD_OK)
+    FMOD_System_Init(system, 2, FMOD_INIT_NORMAL, NULL);
+
+    FMOD_SOUND* background = NULL;
+    FMOD_SOUND* firework = NULL;
+
+    FMOD_RESULT check;
+
+    check = FMOD_System_CreateSound(system, "../music/firework_explode_and_crackle.mp3", FMOD_CREATESAMPLE, 0, &firework);
+    if (check != FMOD_OK)
     {
-        std::cerr << "Impossible de lire le son test" << std::endl;
+        fprintf(stderr, "Impossible de lire le fichier firework.wav\n");
         exit(EXIT_FAILURE);
     }
+    check = FMOD_System_CreateSound(system, "../music/Timer.mp3", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &background);
+    
+    if (check != FMOD_OK)
+    {
+        fprintf(stderr, "Impossible de lire le fichier Timer.mp3\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    FMOD_CHANNEL *backgroundChannel = NULL;
+    FMOD_CHANNEL *fireworkChannel = NULL;
+    FMOD_System_GetChannel(system, 0, &backgroundChannel);
+    FMOD_System_GetChannel(system, 1, &fireworkChannel);
+    FMOD_Sound_SetLoopCount(background, -1);
 
-    FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, test, 0, NULL);
+
+    FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, background, 0, &backgroundChannel);
 
     time_t beginTime;
     time_t currentTime;
@@ -181,6 +196,7 @@ int main() {
                 || checkFoodCollision(redGraph, redManager, foodManager, fireworkManager, 0.05f, 0) != -1
                 || checkFoodCollision(blueGraph, blueManager, foodManager, fireworkManager, 0.05f, 0) != -1) {
 
+                FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, firework, 0, &fireworkChannel);
                 updateParticle(foodManager, 0, autoManager, 0);
                 bonus++;
             }
@@ -233,6 +249,14 @@ int main() {
 					break;
 
 				case SDL_QUIT:
+
+                    //FMOD
+                    /* On libère le son et on ferme et libère l'objet système */
+                    FMOD_Sound_Release(background);
+                    FMOD_Sound_Release(firework);
+                    FMOD_System_Close(system);
+                    FMOD_System_Release(system);
+
 					done = true;
 					break;
             }

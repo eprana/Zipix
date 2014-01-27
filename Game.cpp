@@ -148,7 +148,7 @@ namespace imac3 {
 	            && foodManager.getParticleY(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
 	            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + step* foodManager.getParticleMass(i)) {
 
-	        	fireworkManager.addCircleParticlesAtPosition(3, snakeManager.getParticlePosition(0), snakeManager.getParticleColor(1), 6);
+	        	fireworkManager.addCircleParticlesAtPosition(3, snakeManager.getParticlePosition(0), snakeManager.getParticleColor(1), 25);
 
 	            addParticletoSnake(snakeGraph, i, foodManager, snakeManager);
                 foodManager.addRandomParticle(snakeManager.getCount());
