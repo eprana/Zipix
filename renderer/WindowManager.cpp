@@ -23,7 +23,7 @@ WindowManager::WindowManager(uint32_t w, uint32_t h, const char *title)/*:
         throw std::runtime_error("Unable to initialize SDL_ttf");
     }
 
-    loadText();
+    //loadText();
     
     GLenum error = glewInit();
     if(error != GLEW_OK) {
@@ -32,6 +32,8 @@ WindowManager::WindowManager(uint32_t w, uint32_t h, const char *title)/*:
 }
 
 WindowManager::~WindowManager() {
+    TTF_CloseFont(font);
+    TTF_Quit();
     SDL_Quit();
 }
 
@@ -46,20 +48,19 @@ float WindowManager::update() {
     return 0.01f * (SDL_GetTicks() - m_nStartTime);
 }
 
-void WindowManager::loadText() { 
-    white = {1,0,0};
-    font = TTF_OpenFont("albas.TTF", 65);
-    text = TTF_RenderText_Blended(font, "Zipix !", white);
-}
+// void WindowManager::loadText() { 
+//     white = {1,0,0};
+//     font = TTF_OpenFont("albas.TTF", 65);
+//     text = TTF_RenderText_Blended(font, "Zipix !", white);
+// }
 
-void WindowManager::drawText() {
-    position.x = 500;
-    position.y = 500;
-    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    SDL_BlitSurface(text, NULL, window, &position);
-    SDL_Flip(window);
-    SDL_GL_SwapBuffers();
-}
+// void WindowManager::drawText() {
+//     position.x = 500;
+//     position.y = 500;
+//     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+//     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//     SDL_BlitSurface(text, NULL, window, &position);
+//     SDL_Flip(window);
+// }
 
 }

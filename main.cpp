@@ -15,29 +15,21 @@
 #include "GraphHookForce.hpp"
 
 //FMOD
-#include "../libs/FMOD-4.44.27/linux/inc/fmod.h"
+#include "fmod.h"
 #include "fmod_errors.h"
 
 #include <vector>
 
-static const Uint32 WINDOW_WIDTH = 512;
-static const Uint32 WINDOW_HEIGHT = 512;
+static const Uint32 WINDOW_WIDTH = 1024;
+static const Uint32 WINDOW_HEIGHT = 1024;
 
 using namespace imac3;
-
-typedef enum {
-    SNAKE_UP,
-    SNAKE_DOWN,
-    SNAKE_RIGHT, 
-    SNAKE_LEFT
-} SnakeDirection;
-
 
 int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "ZIPIX");
     wm.setFramerate(30);
 
-    // ----- Fmod test ----- 
+    // FMOD
     FMOD_SYSTEM *system;
 
     /* Création et initialisation d'un objet système */
@@ -72,6 +64,7 @@ int main() {
 
     FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, background, 0, &backgroundChannel);
 
+    // Time
     time_t beginTime;
     time_t currentTime;
     time(&beginTime);
@@ -133,8 +126,6 @@ int main() {
     copyParticle(blueManager, autoManager, 0);
 
     // Variables
-    //const float viscosity = -0.05;
-
     int score = 0;
     int bonus = 0;
 
@@ -146,7 +137,6 @@ int main() {
 
         time(&currentTime);
         wm.startMainLoop();
-
 
         // Renderer
         renderer.clear(); 
@@ -184,9 +174,6 @@ int main() {
         // Simulation
         if(dt != 0) {
 
-            // std::cout << "Begin : " << beginTime << std::endl;
-            // std::cout << "Current : " << currentTime << std::endl;
- 
             //Bonus
             if(difftime(currentTime, beginTime) == 10) {
                 beginTime = currentTime;
@@ -225,11 +212,6 @@ int main() {
             blueGraphHook.apply(blueManager);
             blueGraphBrake.apply(blueManager);
 
-            // Viscosity 
-            // for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
-            //     snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
-            // }
-
             addRepulsiveForce(bonusManager, snakeManager);
             addRepulsiveForce(bonusManager, redManager);
             addRepulsiveForce(bonusManager, blueManager);       
@@ -262,32 +244,12 @@ int main() {
 
 					done = true;
 					break;
-
-                //Déplacement
-                // case SDL_KEYDOWN:
-                //     if(e.key.keysym.sym == SDLK_LEFT) {
-                //         dir = SNAKE_LEFT;
-                //         break;
-                // 	}
-                //     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                //         dir = SNAKE_RIGHT;
-                //         break;
-                //     }
-                //     else if(e.key.keysym.sym == SDLK_UP) {
-                //         dir = SNAKE_UP;
-                //         break;
-                //     }
-                //     else if(e.key.keysym.sym == SDLK_DOWN) {
-                //         dir = SNAKE_DOWN;
-                //         break;
-                //     }
-                //     break;
             }
 		}
 
         // Mise à jour de la fenêtre
         dt = wm.update();
-	}
+	 }
 
 	return EXIT_SUCCESS;
 }
