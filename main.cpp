@@ -20,8 +20,8 @@
 
 #include <vector>
 
-static const Uint32 WINDOW_WIDTH = 1024;
-static const Uint32 WINDOW_HEIGHT = 1024;
+static const Uint32 WINDOW_WIDTH = 512;
+static const Uint32 WINDOW_HEIGHT = 512;
 
 using namespace imac3;
 
@@ -34,7 +34,7 @@ typedef enum {
 
 
 int main() {
-    WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
+    WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "ZIPIX");
     wm.setFramerate(30);
 
     // ----- Fmod test ----- 
@@ -80,8 +80,11 @@ int main() {
     ParticleRenderer2D renderer;
 
     ParticleManager snakeManager;
+    snakeManager.setHeadColor(glm::vec3(0.4f, 0.8f, 0.3f));
     ParticleManager redManager;
+    redManager.setHeadColor(glm::vec3(0.9f, 0.4f, 0.3f));
     ParticleManager blueManager;
+    blueManager.setHeadColor(glm::vec3(0.2f, 0.4f, 0.9f));
 
     ParticleManager foodManager;
     ParticleManager bonusManager;
@@ -91,7 +94,7 @@ int main() {
 
     // Graph Forces
     GraphHookForce graphHook = GraphHookForce(1.f, 0.15f/4.f);
-    GraphBrakeForce graphBrake = GraphBrakeForce(0.3f, 0.0001f); // 0.5 = viscosité max 
+    GraphBrakeForce graphBrake = GraphBrakeForce(0.3f, 10.f); // 0.5 = viscosité max 
     
     GraphHookForce redGraphHook = GraphHookForce(1.f, 0.15f/4.f);
     GraphBrakeForce redGraphBrake = GraphBrakeForce(0.3f, 0.0001f);
@@ -104,11 +107,11 @@ int main() {
 
     // // Ajout des particules
     int id = foodManager.addRandomParticle(1);
-    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
-    bonusManager.addParticle(1.5f, glm::vec2(-0.2, 0.6), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
-    bonusManager.addParticle(1.5f, glm::vec2(0.8, -0.7), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
-    bonusManager.addParticle(1.5f, glm::vec2(-0.7, -0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
-    bonusManager.addParticle(1.5f, glm::vec2(0.3, -0.1), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
+    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.2, 0.6), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.8, -0.7), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.7, -0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.3, -0.1), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(10.8f, 0.6f, 0.f));
 
     // Copy the food to the autoManager
     copyParticle(foodManager, autoManager, id);
@@ -121,9 +124,9 @@ int main() {
     PolygonForce boxForce(box, 1.5f, leapfrog);
 
     // Snake's creation
-    ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(0.2f, 0.6f, 0.2f), 4.f, snakeManager);
-    ParticleGraph redGraph = createString(glm::vec2(0.f, 0.2f), glm::vec2(0.15f, 0.2f), glm::vec3(0.6f, 0.2f, 0.2f), 4.f, redManager);
-    ParticleGraph blueGraph = createString(glm::vec2(0.f, -0.2f), glm::vec2(-0.15f, -0.2f), glm::vec3(0.2f, 0.2f, 0.6f), 4.f, blueManager);
+    ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(0.2f, 0.6f, 0.2f), glm::vec3(0.4f, 0.8f, 0.3f), 4.f, snakeManager);
+    ParticleGraph redGraph = createString(glm::vec2(0.f, 0.2f), glm::vec2(0.15f, 0.2f), glm::vec3(0.9f, 0.2f, 0.2f), glm::vec3(0.9f, 0.4f, 0.3f), 4.f, redManager);
+    ParticleGraph blueGraph = createString(glm::vec2(0.f, -0.2f), glm::vec2(-0.15f, -0.2f), glm::vec3(0.2f, 0.2f, 0.6f), glm::vec3(0.2f, 0.4f, 0.9f), 4.f, blueManager);
 
     copyParticle(snakeManager, autoManager, 0);
     copyParticle(redManager, autoManager, 0);
@@ -143,6 +146,7 @@ int main() {
 
         time(&currentTime);
         wm.startMainLoop();
+
 
         // Renderer
         renderer.clear(); 
@@ -239,7 +243,6 @@ int main() {
             leapfrog.solve(bonusManager, dt);
         }
         
-
         // Gestion des evenements
 		SDL_Event e;
         while(wm.pollEvent(e)) {
@@ -259,6 +262,26 @@ int main() {
 
 					done = true;
 					break;
+
+                //Déplacement
+                // case SDL_KEYDOWN:
+                //     if(e.key.keysym.sym == SDLK_LEFT) {
+                //         dir = SNAKE_LEFT;
+                //         break;
+                // 	}
+                //     else if(e.key.keysym.sym == SDLK_RIGHT) {
+                //         dir = SNAKE_RIGHT;
+                //         break;
+                //     }
+                //     else if(e.key.keysym.sym == SDLK_UP) {
+                //         dir = SNAKE_UP;
+                //         break;
+                //     }
+                //     else if(e.key.keysym.sym == SDLK_DOWN) {
+                //         dir = SNAKE_DOWN;
+                //         break;
+                //     }
+                //     break;
             }
 		}
 

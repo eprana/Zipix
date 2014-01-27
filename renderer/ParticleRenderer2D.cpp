@@ -89,6 +89,37 @@ GL_STRINGIFY(
     }
 );
 
+// const GLchar* ParticleRenderer2D::TEXT_VERTEX_SHADER =
+// "#version 330 core\n"
+// GL_STRINGIFY(
+//     in vec3 vert;
+//     in vec4 color;
+//     in vec2 texcoord;
+     
+//     out vec4 fragColor;
+//     out vec2 texCoord;
+     
+//     void main() {
+//         fragColor = color;
+//         gl_Position = vec4(vert, 1);
+//         texCoord = texcoord;
+//     }
+// );
+
+// const GLchar* ParticleRenderer2D::TEXT_FRAGMENT_SHADER =
+// "#version 330 core\n"
+// GL_STRINGIFY(
+//     in vec2 texCoord;
+//     in vec4 fragColor;
+     
+//     out vec3 finalColor;
+     
+//     uniform sampler2D uTextureSampler;
+//     void main() {
+//         finalColor = texture( uTextureSampler, texCoord ).rgb;
+//     }
+// );
+
 ParticleRenderer2D::ParticleRenderer2D(float massScale):
     m_ProgramID(buildProgram(VERTEX_SHADER, FRAGMENT_SHADER)),
     m_PolygonProgramID(buildProgram(POLYGON_VERTEX_SHADER, POLYGON_FRAGMENT_SHADER)),
@@ -101,6 +132,8 @@ ParticleRenderer2D::ParticleRenderer2D(float massScale):
     m_uParticleScale = glGetUniformLocation(m_ProgramID, "uParticleScale");
 
     m_uPolygonColor = glGetUniformLocation(m_PolygonProgramID, "uPolygonColor");
+
+    //m_uTextureSampler = glGetUniformLocation(m_TextProgramID, "uTextureSampler");
 
     // Création du VBO
     glGenBuffers(1, &m_VBOID);

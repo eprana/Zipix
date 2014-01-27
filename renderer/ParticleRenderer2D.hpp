@@ -37,13 +37,14 @@ public:
                    const glm::vec3* colorArray,
                    float lineWidth = 1.f);
 
+
 private:
     static const GLchar *VERTEX_SHADER, *FRAGMENT_SHADER;
     static const GLchar *POLYGON_VERTEX_SHADER, *POLYGON_FRAGMENT_SHADER;
     static const GLchar *LINE_VERTEX_SHADER, *LINE_FRAGMENT_SHADER;
 
     // Ressources OpenGL
-    GLuint m_ProgramID, m_PolygonProgramID, m_LineProgramID;
+    GLuint m_ProgramID, m_PolygonProgramID, m_LineProgramID, m_TextProgramID;
     GLuint m_VBOID, m_VAOID;
 
     GLuint m_PolygonVBOID, m_PolygonVAOID;

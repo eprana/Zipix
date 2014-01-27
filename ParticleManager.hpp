@@ -12,8 +12,8 @@ typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
 
 const glm::vec3 snakeColor = glm::vec3(0.2f, 0.6f, 0.2f);
 const glm::vec3 headColor = glm::vec3(0.4f, 0.8f, 0.2f); 
-const glm::vec3 foodColor = glm::vec3(0.2f, 0.2f, 0.6f);
-const glm::vec3 bonusColor = glm::vec3(1.f, 0.f, 0.f);
+const glm::vec3 foodColor = glm::vec3(1.f, 1.f, 1.f);
+const glm::vec3 bonusColor = glm::vec3(0.8f, 0.6f, 0.f);
 const glm::vec3 speedColor = glm::vec3(0.f, 1.f, 0.f);
 const glm::vec3 malusColor =  glm::vec3(0.f, 1.f, 0.f);
 
@@ -42,6 +42,7 @@ class ParticleManager {
 		inline glm::vec2& getParticleVelocity(int id) { return velocityArray[id];}
 		inline glm::vec2& getParticleForce(int id) { return forceArray[id];}
 		inline glm::vec3& getParticleColor(int id) { return colorArray[id];}
+		inline glm::vec3& getHeadColor() { return headColor;}
 		inline Type& getParticleType(int id) { return typeArray[id];}
 
 		inline int getCount() { return getMassArray().size();}
@@ -71,6 +72,11 @@ class ParticleManager {
 		// Draw particleGraph
 		void drawParticleGraph(ParticleGraph& graph, ParticleRenderer2D& renderer);
 
+		// Set head color
+		void setHeadColor(glm::vec3 color){
+			headColor = color;
+		};
+
 		// Remove particle
 		void removeParticle(int id);
 
@@ -86,6 +92,7 @@ class ParticleManager {
 		std::vector<glm::vec2> 	velocityArray;
 		std::vector<glm::vec2>	forceArray;
 		std::vector<glm::vec3>	colorArray;
+		glm::vec3				headColor;
 		std::vector<Type> 		typeArray;
 };
 
