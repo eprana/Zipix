@@ -37,13 +37,11 @@ public:
                    const glm::vec3* colorArray,
                    float lineWidth = 1.f);
 
-    void drawText();
 
 private:
     static const GLchar *VERTEX_SHADER, *FRAGMENT_SHADER;
     static const GLchar *POLYGON_VERTEX_SHADER, *POLYGON_FRAGMENT_SHADER;
     static const GLchar *LINE_VERTEX_SHADER, *LINE_FRAGMENT_SHADER;
-    static const GLchar *TEXT_VERTEX_SHADER, *TEXT_FRAGMENT_SHADER;
 
     // Ressources OpenGL
     GLuint m_ProgramID, m_PolygonProgramID, m_LineProgramID, m_TextProgramID;
@@ -59,8 +57,6 @@ private:
     GLint m_uParticleScale;
 
     GLint m_uPolygonColor;
-
-    GLint m_uTextureSampler;
 
     // Scale appliqué sur la masse de chaque particule pour obtenir sa taille
     float m_fMassScale;

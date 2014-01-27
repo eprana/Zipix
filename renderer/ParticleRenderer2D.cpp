@@ -89,36 +89,36 @@ GL_STRINGIFY(
     }
 );
 
-const GLchar* ParticleRenderer2D::TEXT_VERTEX_SHADER =
-"#version 330 core\n"
-GL_STRINGIFY(
-    in vec3 vert;
-    in vec4 color;
-    in vec2 texcoord;
+// const GLchar* ParticleRenderer2D::TEXT_VERTEX_SHADER =
+// "#version 330 core\n"
+// GL_STRINGIFY(
+//     in vec3 vert;
+//     in vec4 color;
+//     in vec2 texcoord;
      
-    out vec4 fragColor;
-    out vec2 texCoord;
+//     out vec4 fragColor;
+//     out vec2 texCoord;
      
-    void main() {
-        fragColor = color;
-        gl_Position = vec4(vert, 1);
-        texCoord = texcoord;
-    }
-);
+//     void main() {
+//         fragColor = color;
+//         gl_Position = vec4(vert, 1);
+//         texCoord = texcoord;
+//     }
+// );
 
-const GLchar* ParticleRenderer2D::TEXT_FRAGMENT_SHADER =
-"#version 330 core\n"
-GL_STRINGIFY(
-    in vec2 texCoord;
-    in vec4 fragColor;
+// const GLchar* ParticleRenderer2D::TEXT_FRAGMENT_SHADER =
+// "#version 330 core\n"
+// GL_STRINGIFY(
+//     in vec2 texCoord;
+//     in vec4 fragColor;
      
-    out vec3 finalColor;
+//     out vec3 finalColor;
      
-    uniform sampler2D uTextureSampler;
-    void main() {
-        finalColor = texture( uTextureSampler, texCoord ).rgb;
-    }
-);
+//     uniform sampler2D uTextureSampler;
+//     void main() {
+//         finalColor = texture( uTextureSampler, texCoord ).rgb;
+//     }
+// );
 
 ParticleRenderer2D::ParticleRenderer2D(float massScale):
     m_ProgramID(buildProgram(VERTEX_SHADER, FRAGMENT_SHADER)),
@@ -133,7 +133,7 @@ ParticleRenderer2D::ParticleRenderer2D(float massScale):
 
     m_uPolygonColor = glGetUniformLocation(m_PolygonProgramID, "uPolygonColor");
 
-    m_uTextureSampler = glGetUniformLocation(m_TextProgramID, "uTextureSampler");
+    //m_uTextureSampler = glGetUniformLocation(m_TextProgramID, "uTextureSampler");
 
     // Création du VBO
     glGenBuffers(1, &m_VBOID);
@@ -282,19 +282,4 @@ void ParticleRenderer2D::drawLines(
     glBindVertexArray(0);
 }
 
-void ParticleRenderer2D::drawText() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-    // glActiveTexture(0);
-    // glBindTexture(GL_TEXTURE_2D, fontTexture);
-    
-    // //instanceText.draw();
-
-    // glActiveTexture(0);
-    // glBindTexture(GL_TEXTURE_2D,0);
-
-    // glDisable(GL_BLEND);
-
-}
 }

@@ -18,19 +18,17 @@ public:
 
     WindowManager& operator =(const WindowManager&) = delete;
 
-    void loadText();
-
-    void drawText();
-
     bool pollEvent(SDL_Event& e) const {
         return SDL_PollEvent(&e);
     }
 
+    void loadText();
+    void drawText();
 
     // A appeler en début de boucle de rendu
     void startMainLoop() {
         m_nStartTime = SDL_GetTicks();
-        //drawText();
+        drawText();
     }
 
     // Met à jour la fenetre et renvoit le temps écoulé depuis le dernier appel à startMainLoop (en secondes)
@@ -49,10 +47,11 @@ private:
     uint32_t m_nStartTime;
 
     SDL_Surface *window;
-    TTF_Font *font;
     SDL_Surface *text;
     SDL_Rect position;
     SDL_Color white;
+    TTF_Font *font;
+    
     GLuint textureText;
     GLuint m_TextProgramID;
     GLuint m_uTextureSampler;
