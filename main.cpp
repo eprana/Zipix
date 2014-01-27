@@ -14,6 +14,10 @@
 #include "GraphBrakeForce.hpp"
 #include "GraphHookForce.hpp"
 
+//FMOD
+#include "../libs/FMOD-4.44.27/linux/inc/fmod.h"
+#include "fmod_errors.h"
+
 #include <vector>
 
 static const Uint32 WINDOW_WIDTH = 1024;
@@ -32,6 +36,26 @@ typedef enum {
 int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
     wm.setFramerate(30);
+
+    // ----- Fmod test ----- 
+    FMOD_SYSTEM *system;
+    FMOD_SOUND *test;
+    
+    FMOD_RESULT resultat;
+
+    /* Création et initialisation d'un objet système */
+    FMOD_System_Create(&system);
+    FMOD_System_Init(system, 1, FMOD_INIT_NORMAL, NULL);
+    
+    /* Chargement du son et vérification du chargement */
+    resultat = FMOD_System_CreateSound(system, "../music/Timer.mp3", FMOD_CREATESAMPLE, 0, &test);
+    if (resultat != FMOD_OK)
+    {
+        std::cerr << "Impossible de lire le son test" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, test, 0, NULL);
 
     time_t beginTime;
     time_t currentTime;
