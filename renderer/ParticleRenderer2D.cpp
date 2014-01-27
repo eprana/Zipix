@@ -282,4 +282,19 @@ void ParticleRenderer2D::drawLines(
     glBindVertexArray(0);
 }
 
+void ParticleRenderer2D::drawText() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+    // glActiveTexture(0);
+    // glBindTexture(GL_TEXTURE_2D, fontTexture);
+    
+    // //instanceText.draw();
+
+    // glActiveTexture(0);
+    // glBindTexture(GL_TEXTURE_2D,0);
+
+    // glDisable(GL_BLEND);
+
+}
 }

@@ -3,7 +3,7 @@
 namespace imac3 {	
 
 	// Create a particleGraph
-	ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t discFactor, ParticleManager& particleManager) {
+	ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, glm::vec3 headColor, uint32_t discFactor, ParticleManager& particleManager) {
 	    glm::vec2 AB = B - A;
 	    glm::vec2 step = glm::vec2(AB[0]/discFactor, AB[1]/discFactor);
 	    glm::vec2 position = A;
@@ -27,7 +27,7 @@ namespace imac3 {
 	  
 	        position += step;
 	    }
-	    particleManager.getParticleColor(0) = glm::vec3(0.4f, 0.8f, 0.2f);
+	    particleManager.getParticleColor(0) = headColor;
 	    return graph;
 	}
 
@@ -57,7 +57,7 @@ namespace imac3 {
 	                                    foodManager.getParticlePosition(id),
 	                                    foodManager.getParticleVelocity(id),
 	                                    foodManager.getParticleForce(id),
-	                                    headColor);
+	                                    snakeManager.getHeadColor());
 
 	    foodManager.clear();
 

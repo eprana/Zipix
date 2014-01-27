@@ -42,6 +42,7 @@ class ParticleManager {
 		inline glm::vec2& getParticleVelocity(int id) { return velocityArray[id];}
 		inline glm::vec2& getParticleForce(int id) { return forceArray[id];}
 		inline glm::vec3& getParticleColor(int id) { return colorArray[id];}
+		inline glm::vec3& getHeadColor() { return headColor;}
 		inline Type& getParticleType(int id) { return typeArray[id];}
 
 		inline int getCount() { return getMassArray().size();}
@@ -71,6 +72,10 @@ class ParticleManager {
 		// Draw particleGraph
 		void drawParticleGraph(ParticleGraph& graph, ParticleRenderer2D& renderer);
 
+		void setHeadColor(glm::vec3 color){
+			headColor = color;
+		};
+
 		// Clear Manager
 		void clear();
 
@@ -84,6 +89,7 @@ class ParticleManager {
 		std::vector<glm::vec2> 	velocityArray;
 		std::vector<glm::vec2>	forceArray;
 		std::vector<glm::vec3>	colorArray;
+		glm::vec3				headColor;
 		std::vector<Type> 		typeArray;
 };
 

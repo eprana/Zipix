@@ -36,8 +36,11 @@ int main() {
     ParticleRenderer2D renderer;
 
     ParticleManager snakeManager;
+    snakeManager.setHeadColor(glm::vec3(0.4f, 0.8f, 0.3f));
     ParticleManager redManager;
+    redManager.setHeadColor(glm::vec3(0.9f, 0.4f, 0.3f));
     ParticleManager blueManager;
+    blueManager.setHeadColor(glm::vec3(0.2f, 0.4f, 0.9f));
 
     ParticleManager foodManager;
     ParticleManager bonusManager;
@@ -73,9 +76,9 @@ int main() {
     PolygonForce boxForce(box, 1.5f, leapfrog);
 
     // Snake's creation
-    ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(0.2f, 0.6f, 0.2f), 4.f, snakeManager);
-    ParticleGraph redGraph = createString(glm::vec2(0.f, 0.2f), glm::vec2(0.15f, 0.2f), glm::vec3(0.6f, 0.2f, 0.2f), 4.f, redManager);
-    ParticleGraph blueGraph = createString(glm::vec2(0.f, -0.2f), glm::vec2(-0.15f, -0.2f), glm::vec3(0.2f, 0.2f, 0.6f), 4.f, blueManager);
+    ParticleGraph snakeGraph = createString(glm::vec2(0.f, 0.0f), glm::vec2(0.f, -0.15f), glm::vec3(0.2f, 0.6f, 0.2f), glm::vec3(0.4f, 0.8f, 0.3f), 4.f, snakeManager);
+    ParticleGraph redGraph = createString(glm::vec2(0.f, 0.2f), glm::vec2(0.15f, 0.2f), glm::vec3(0.9f, 0.2f, 0.2f), glm::vec3(0.9f, 0.4f, 0.3f), 4.f, redManager);
+    ParticleGraph blueGraph = createString(glm::vec2(0.f, -0.2f), glm::vec2(-0.15f, -0.2f), glm::vec3(0.2f, 0.2f, 0.6f), glm::vec3(0.2f, 0.4f, 0.9f), 4.f, blueManager);
 
     copyParticle(snakeManager, autoManager, 0);
     copyParticle(redManager, autoManager, 0);
@@ -212,8 +215,7 @@ int main() {
 					done = true;
 					break;
 
-
-                // Déplacement
+                //Déplacement
                 // case SDL_KEYDOWN:
                 //     if(e.key.keysym.sym == SDLK_LEFT) {
                 //         dir = SNAKE_LEFT;

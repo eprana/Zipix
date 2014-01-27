@@ -8,7 +8,7 @@ namespace imac3 {
 	typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
 
 	// Create a particleGraph
-	ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, uint32_t discFactor, ParticleManager& particleManager);
+	ParticleGraph createString(glm::vec2 A, glm::vec2 B, glm::vec3 color, glm::vec3 headColor, uint32_t discFactor, ParticleManager& particleManager);
 	
 	// Copy a particle
 	int copyParticle(ParticleManager& sourceManager, ParticleManager& destinationManager, int id);
