@@ -71,6 +71,9 @@ class ParticleManager {
 		// Draw particleGraph
 		void drawParticleGraph(ParticleGraph& graph, ParticleRenderer2D& renderer);
 
+		// Remove particle
+		void removeParticle(int id);
+
 		// Clear Manager
 		void clear();
 
@@ -78,7 +81,6 @@ class ParticleManager {
 
 
 	private:
-
 		std::vector<float> 		massArray;
 		std::vector<glm::vec2>	positionArray;
 		std::vector<glm::vec2> 	velocityArray;

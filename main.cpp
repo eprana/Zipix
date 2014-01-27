@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <ctime> 
 
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
@@ -32,6 +33,10 @@ int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "Zipix");
     wm.setFramerate(30);
 
+    time_t beginTime;
+    time_t currentTime;
+    time(&beginTime);
+
     // Managers and Renderer
     ParticleRenderer2D renderer;
 
@@ -61,6 +66,10 @@ int main() {
     // // Ajout des particules
     int id = foodManager.addRandomParticle(1);
     bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.2, 0.6), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
+    bonusManager.addParticle(1.5f, glm::vec2(0.8, -0.7), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.7, -0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
+    bonusManager.addParticle(1.5f, glm::vec2(0.3, -0.1), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
 
     // Copy the food to the autoManager
     copyParticle(foodManager, autoManager, id);
@@ -82,18 +91,18 @@ int main() {
     copyParticle(blueManager, autoManager, 0);
 
     // Variables
-    //const float step = 0.04;
     //const float viscosity = -0.05;
 
     int score = 0;
     int bonus = 0;
-    //SnakeDirection dir = SNAKE_UP;
 
     // Temps s'écoulant entre chaque frame
     float dt = 0.f;
 
 	bool done = false;
     while(!done) {
+
+        time(&currentTime);
         wm.startMainLoop();
 
         // Renderer
@@ -132,22 +141,13 @@ int main() {
         // Simulation
         if(dt != 0) {
 
-            // Move
-            // if(dir == SNAKE_UP) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(0.f, step);
-            // }
-            // else if (dir == SNAKE_DOWN) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(0.f, -step);
-            // }
-            // else if (dir == SNAKE_LEFT) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(-step, 0.f);
-            // }
-            // else if (dir == SNAKE_RIGHT) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
-            // }
-
+            // std::cout << "Begin : " << beginTime << std::endl;
+            // std::cout << "Current : " << currentTime << std::endl;
+ 
             //Bonus
-            if(bonus%10 == 9) {
+            if(difftime(currentTime, beginTime) == 10) {
+                beginTime = currentTime;
+                time(&currentTime);
                 addBonus(bonusManager);
                 bonus++;
             }
@@ -211,27 +211,6 @@ int main() {
 				case SDL_QUIT:
 					done = true;
 					break;
-
-
-                // Déplacement
-                // case SDL_KEYDOWN:
-                //     if(e.key.keysym.sym == SDLK_LEFT) {
-                //         dir = SNAKE_LEFT;
-                //         break;
-                // 	}
-                //     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                //         dir = SNAKE_RIGHT;
-                //         break;
-                //     }
-                //     else if(e.key.keysym.sym == SDLK_UP) {
-                //         dir = SNAKE_UP;
-                //         break;
-                //     }
-                //     else if(e.key.keysym.sym == SDLK_DOWN) {
-                //         dir = SNAKE_DOWN;
-                //         break;
-                //     }
-                //     break;
             }
 		}
 
