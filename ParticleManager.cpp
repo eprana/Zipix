@@ -30,10 +30,8 @@ namespace imac3 {
 
 	// Add random particles
 	void ParticleManager::addRandomParticles(unsigned int count) {	
+		srand (time(NULL));
 		for(int i = 0; i < count; ++i) {
-
-			/* initialize random seed: */
-			srand (time(NULL));
 
 			float x = (rand() % 18 - 9) / 10.f;
 			float y = (rand() % 18 - 9) / 10.f;
@@ -60,21 +58,17 @@ namespace imac3 {
 		// Color
 		glm::vec3 color;
 
+		// Mass
+		float m = 1.f;
+
 		switch(type) {
 			case Type::P_FOOD:
 				color = foodColor;
 				break;
 
-			case Type::P_SPEED:
-				color = speedColor;
-				break;
-
 			case Type::P_BONUS:
 				color = bonusColor;
-				break;
-
-			case Type::P_MALUS:
-				color = malusColor;
+				m = 1.5f;
 				break;
 
 			default: 
@@ -82,12 +76,24 @@ namespace imac3 {
 				break;
 		}  
 
-		// Mass
-		float m = 1.f;
+		
 
 		return addParticle(m, glm::vec2(x, y), glm::vec2(0, 0), glm::vec2(0, 0), color, type);
 	}
 
+	// Add random particle in a specific position 
+	void ParticleManager::addCircleParticlesAtPosition(int random, glm::vec2 position, glm::vec3 color, int count) {
+		srand(time(NULL)*random);
+		float delta = 2 * 3.14f / count;
+
+		for(int i = 0; i < count; ++i) {
+			
+			float c = cos(i * delta);
+			float s = sin(i * delta);
+
+			addParticle(1.f, position, glm::vec2(0, 0), glm::vec2(c/5, s/5), color);
+		}
+	}
 
 	// Add force to a particle
 	void ParticleManager::addForceToParticle(int id, glm::vec2 force) {

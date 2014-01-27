@@ -69,23 +69,44 @@ namespace imac3 {
 
 		// Add attractive force
 	void addAttractiveForce(ParticleManager& foodManager, ParticleManager& snakeManager) {
-		int attractiveCoeff = 7;
+		int attractiveCoeff = 50;
 		glm::vec2 attractiveForce = foodManager.getParticlePosition(0) - snakeManager.getParticlePosition(0);
-        int d = attractiveForce.length();
+        float d = glm::length(attractiveForce);
         attractiveForce = glm::normalize(attractiveForce);
+        
+      
+	    // Plus on divise et plus c'est petit : pluattractivecoeff augmente et mois l'attraction est forte au loin
         snakeManager.addForceToParticle(0, glm::vec2(attractiveForce[0]/(attractiveCoeff*d), attractiveForce[1]/(attractiveCoeff*d)));
         
 	}
+
+		// Add repulsive force
+	void addRepulsiveForce(ParticleManager& repulsiveManager, ParticleManager& snakeManager) {
+		if(repulsiveManager.getCount() > 0) {
+			for(int i = 0; i < snakeManager.getCount(); ++i) {
+				for(int j = 0; j < repulsiveManager.getCount(); ++j) {
+	                glm::vec2 repulse = snakeManager.getParticlePosition(i) - repulsiveManager.getParticlePosition(j);
+	                float d = glm::length(repulse);
+	                repulse = glm::normalize(repulse);
+
+	                int repulsiveCoeff = 40;
+
+	                if(d < 0.2) {
+	                   // Plus on divise et plus c'est petit : pluattractivecoeff augmente et mois l'attraction est forte au loin
+	                    snakeManager.addForceToParticle(i, glm::vec2(repulse[0]/(repulsiveCoeff*d), repulse[1]/(repulsiveCoeff*d)));
+	                }
+				}	               
+                
+            }
+		}
+		
+	}
+
 	
 
 	// Create bonus
 	void addBonus(ParticleManager& bonusManager) {
-		srand(time(NULL));
-
-		int bonus = rand()%3 + 2;
-		std::cout << bonus << std::endl;
-		bonusManager.addRandomParticle(3, (ParticleManager::Type)bonus);
-
+		bonusManager.addRandomParticle(3, ParticleManager::Type::P_BONUS);
 
 	}
 
@@ -118,13 +139,15 @@ namespace imac3 {
 	}
 
 	// Check collision between snake and food
-	int checkFoodCollision(ParticleGraph& snakeGraph, ParticleManager& snakeManager, ParticleManager& foodManager, float step, int init) {
+	int checkFoodCollision(ParticleGraph& snakeGraph, ParticleManager& snakeManager, ParticleManager& foodManager, ParticleManager& fireworkManager, float step, int init) {
 	    for(int i = init; i < foodManager.getCount(); ++i) {
 
 	        if(foodManager.getParticleX(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleX(0) 
 	            && snakeManager.getParticleX(0) <= foodManager.getParticleX(i) + step * foodManager.getParticleMass(i)
 	            && foodManager.getParticleY(i) - step * foodManager.getParticleMass(i) <= snakeManager.getParticleY(0) 
 	            && snakeManager.getParticleY(0) <= foodManager.getParticleY(i) + step* foodManager.getParticleMass(i)) {
+
+	        	fireworkManager.addCircleParticlesAtPosition(3, snakeManager.getParticlePosition(0), snakeManager.getParticleColor(1), 6);
 
 	            addParticletoSnake(snakeGraph, i, foodManager, snakeManager);
                 foodManager.addRandomParticle(snakeManager.getCount());

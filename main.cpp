@@ -41,10 +41,11 @@ int main() {
 
     ParticleManager foodManager;
     ParticleManager bonusManager;
+    ParticleManager fireworkManager;
 
     ParticleManager autoManager;
 
-    // Forces
+    // Graph Forces
     GraphHookForce graphHook = GraphHookForce(1.f, 0.15f/4.f);
     GraphBrakeForce graphBrake = GraphBrakeForce(0.3f, 10.f); // 0.5 = viscosité max 
     
@@ -59,12 +60,13 @@ int main() {
 
     // // Ajout des particules
     int id = foodManager.addRandomParticle(1);
+    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
 
     // Copy the food to the autoManager
     copyParticle(foodManager, autoManager, id);
 
     // Forces
-    ConstantForce mg(glm::vec2(0.f, -0.0005f));
+    ConstantForce mg(glm::vec2(0.f, -0.005));
 
     // LeapfrogSolver
     LeapfrogSolver leapfrog;
@@ -96,16 +98,17 @@ int main() {
 
 
         // Renderer
-        renderer.clear();
+        renderer.clear(); 
 
         // Draw particles
         foodManager.drawParticles(renderer);
         snakeManager.drawParticles(renderer);
         redManager.drawParticles(renderer);
         blueManager.drawParticles(renderer);
+        fireworkManager.drawParticles(renderer);  
         bonusManager.drawParticles(renderer);
-
-        //mg.apply(bonusManager);
+        
+        mg.apply(fireworkManager);       
 
         // Mise à jour du graph autoGraph
         updateParticle(snakeManager, 0, autoManager, 1);
@@ -144,72 +147,21 @@ int main() {
             //     snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
             // }
 
-            // Bonus
-            if(bonus == 5) {
+            //Bonus
+            if(bonus%10 == 9) {
                 addBonus(bonusManager);
                 bonus++;
             }
 
-            // // Snake - Window
-            // if(isOutside(snakeManager) ) {
-            //     // || checkSnakeCollision(snakeManager, snakeManager, 0.02f, 1) != -1) {
-            //     std::cout << "YOUR SCORE : "  << score << std::endl;
-            //     snakeManager.clear();
-            //     return EXIT_SUCCESS;
-            // }
-
-            // // Bonus - Window
-            // if(isOutside(bonusManager)) {
-            //     bonusManager.clear();
-            //     bonus = 0;
-            // }
-
             // Snake - Food
-            if( checkFoodCollision(snakeGraph, snakeManager, foodManager, 0.05f, 0) != -1
-                || checkFoodCollision(redGraph, redManager, foodManager, 0.05f, 0) != -1
-                || checkFoodCollision(blueGraph, blueManager, foodManager, 0.05f, 0) != -1) {
+            if( checkFoodCollision(snakeGraph, snakeManager, foodManager, fireworkManager, 0.05f, 0) != -1
+                || checkFoodCollision(redGraph, redManager, foodManager, fireworkManager, 0.05f, 0) != -1
+                || checkFoodCollision(blueGraph, blueManager, foodManager, fireworkManager, 0.05f, 0) != -1) {
 
-                
                 updateParticle(foodManager, 0, autoManager, 0);
                 bonus++;
             }
-            
-           
-            // int idCollision = checkFoodCollision(snakeManager, foodManager, 0.05f, 0);
-            // if( idCollision != -1) {
-            //     addParticletoSnake(snakeGraph, idCollision, foodManager, snakeManager);
-            //     foodManager.addRandomParticle(2);
-            //     updateParticle(foodManager, 0, autoManager, 0);
-            //     //bonus++;
-            //     score += snakeManager.getCount();
-            // }
 
-            // int redCollision = checkFoodCollision(redManager, foodManager, 0.05f, 0);
-            // if( redCollision != -1) {
-            //     addParticletoSnake(redGraph, redCollision, foodManager, redManager);
-            //     foodManager.addRandomParticle(2);
-            //     updateParticle(foodManager, 0, autoManager, 0);
-            //     //bonus++;
-            //     score += redManager.getCount();
-            // }
-
-            // int blueCollision = checkFoodCollision(blueManager, foodManager, 0.05f, 0);
-            // if( blueCollision != -1) {
-            //     addParticletoSnake(blueGraph, blueCollision, foodManager, blueManager);
-            //     foodManager.addRandomParticle(2);
-            //     updateParticle(foodManager, 0, autoManager, 0);
-            //     //bonus++;
-            //     score += blueManager.getCount();
-            // }
-
-
-            // // Snake - Bonus
-            // int idBonusCollision = checkFoodCollision(snakeManager, bonusManager, 0.05f, 0);
-            // if( idBonusCollision != -1) {
-            //     addParticletoSnake(snakeGraph, idBonusCollision, bonusManager, snakeManager);
-            //     bonus = 0;
-            //     score += snakeManager.getCount()*2;
-            // }
 
             // Apply forces
             graphBrake.setDt(dt);
@@ -229,27 +181,22 @@ int main() {
 
             blueGraphHook.apply(blueManager);
             blueGraphBrake.apply(blueManager);
-            
+
             // Viscosity 
             // for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
             //     snakeManager.addForceToParticle(i, snakeManager.getParticleVelocity(i) * viscosity);
             // }
 
-            if(bonusManager.getCount() > 0) {
-                //for(int i = 0; i < snakeManager.getCount() - 1; ++i) {
-                    glm::vec2 repulse = snakeManager.getParticlePosition(0) - bonusManager.getParticlePosition(0);
-                    int d = repulse.length();
-                    repulse = glm::normalize(repulse);
-                    snakeManager.addForceToParticle(0, glm::vec2(repulse[0]/(d*10), repulse[1]/(d*10)));
-                //}
-            }
-            
+            addRepulsiveForce(bonusManager, snakeManager);
+            addRepulsiveForce(bonusManager, redManager);
+            addRepulsiveForce(bonusManager, blueManager);       
 
             // Leapfrog solver
             leapfrog.solve(snakeManager, dt);
             leapfrog.solve(autoManager, dt);
             leapfrog.solve(redManager, dt);
             leapfrog.solve(blueManager, dt);
+            leapfrog.solve(fireworkManager, dt);
             leapfrog.solve(bonusManager, dt);
         }
         
