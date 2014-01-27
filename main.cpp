@@ -52,7 +52,7 @@ int main() {
     check = FMOD_System_CreateSound(system, "../music/firework_explode_and_crackle.mp3", FMOD_CREATESAMPLE, 0, &firework);
     if (check != FMOD_OK)
     {
-        fprintf(stderr, "Impossible de lire le fichier firework.wav\n");
+        fprintf(stderr, "Impossible de lire le fichier firework_explode_and_crackle.mp3\n");
         exit(EXIT_FAILURE);
     }
     check = FMOD_System_CreateSound(system, "../music/Timer.mp3", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &background);
