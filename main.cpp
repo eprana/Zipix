@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <ctime> 
 
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
@@ -12,6 +13,10 @@
 #include "BrakeForce.hpp"
 #include "GraphBrakeForce.hpp"
 #include "GraphHookForce.hpp"
+
+//FMOD
+#include "../libs/FMOD-4.44.27/linux/inc/fmod.h"
+#include "fmod_errors.h"
 
 #include <vector>
 
@@ -31,7 +36,31 @@ typedef enum {
 int main() {
     WindowManager wm(WINDOW_WIDTH, WINDOW_HEIGHT, "ZIPIX");
     wm.setFramerate(30);
+
+    // ----- Fmod test ----- 
+    FMOD_SYSTEM *system;
+    FMOD_SOUND *test;
     
+    FMOD_RESULT resultat;
+
+    /* Création et initialisation d'un objet système */
+    FMOD_System_Create(&system);
+    FMOD_System_Init(system, 1, FMOD_INIT_NORMAL, NULL);
+    
+    /* Chargement du son et vérification du chargement */
+    resultat = FMOD_System_CreateSound(system, "../music/Timer.mp3", FMOD_CREATESAMPLE, 0, &test);
+    if (resultat != FMOD_OK)
+    {
+        std::cerr << "Impossible de lire le son test" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, test, 0, NULL);
+
+    time_t beginTime;
+    time_t currentTime;
+    time(&beginTime);
+
     // Managers and Renderer
     ParticleRenderer2D renderer;
 
@@ -63,7 +92,11 @@ int main() {
 
     // // Ajout des particules
     int id = foodManager.addRandomParticle(1);
-    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(1, 0, 0));
+    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.2, 0.6), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.8, -0.7), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.7, -0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.3, -0.1), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(10.8f, 0.6f, 0.f));
 
     // Copy the food to the autoManager
     copyParticle(foodManager, autoManager, id);
@@ -85,18 +118,18 @@ int main() {
     copyParticle(blueManager, autoManager, 0);
 
     // Variables
-    //const float step = 0.04;
     //const float viscosity = -0.05;
 
     int score = 0;
     int bonus = 0;
-    //SnakeDirection dir = SNAKE_UP;
 
     // Temps s'écoulant entre chaque frame
     float dt = 0.f;
 
 	bool done = false;
     while(!done) {
+
+        time(&currentTime);
         wm.startMainLoop();
 
 
@@ -136,22 +169,13 @@ int main() {
         // Simulation
         if(dt != 0) {
 
-            // Move
-            // if(dir == SNAKE_UP) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(0.f, step);
-            // }
-            // else if (dir == SNAKE_DOWN) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(0.f, -step);
-            // }
-            // else if (dir == SNAKE_LEFT) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(-step, 0.f);
-            // }
-            // else if (dir == SNAKE_RIGHT) {
-            //     snakeManager.getParticleVelocity(0) = glm::vec2(step, 0.f);
-            // }
-
+            // std::cout << "Begin : " << beginTime << std::endl;
+            // std::cout << "Current : " << currentTime << std::endl;
+ 
             //Bonus
-            if(bonus%10 == 9) {
+            if(difftime(currentTime, beginTime) == 10) {
+                beginTime = currentTime;
+                time(&currentTime);
                 addBonus(bonusManager);
                 bonus++;
             }

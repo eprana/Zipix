@@ -117,6 +117,15 @@ namespace imac3 {
 		&colorArray[0]);
 	}
 
+	// Remove particle
+	void ParticleManager::removeParticle(int id) {
+		massArray.erase(massArray.begin(), massArray.begin() + 1);
+		positionArray.erase(positionArray.begin(), positionArray.begin() + 1);
+		velocityArray.erase(velocityArray.begin(), velocityArray.begin() + 1);
+		forceArray.erase(forceArray.begin(), forceArray.begin() + 1);
+		colorArray.erase(colorArray.begin(), colorArray.begin() + 1);
+	}
+
 	// Clear Manager
 	void ParticleManager::clear() {
 		massArray.clear();

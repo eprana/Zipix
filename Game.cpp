@@ -106,7 +106,8 @@ namespace imac3 {
 
 	// Create bonus
 	void addBonus(ParticleManager& bonusManager) {
-		bonusManager.addRandomParticle(3, ParticleManager::Type::P_BONUS);
+		bonusManager.removeParticle(0);
+		bonusManager.addRandomParticle(1, ParticleManager::Type::P_BONUS);
 
 	}
 

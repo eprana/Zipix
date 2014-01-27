@@ -47,18 +47,19 @@ float WindowManager::update() {
 }
 
 void WindowManager::loadText() { 
-    white = {1,1,1};
+    white = {1,0,0};
     font = TTF_OpenFont("albas.TTF", 65);
     text = TTF_RenderText_Blended(font, "Zipix !", white);
 }
 
 void WindowManager::drawText() {
-
-    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
     position.x = 500;
     position.y = 500;
+    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     SDL_BlitSurface(text, NULL, window, &position);
-    SDL_Flip(ecran);
+    SDL_Flip(window);
+    SDL_GL_SwapBuffers();
 }
 
 }
