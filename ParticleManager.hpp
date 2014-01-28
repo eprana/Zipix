@@ -13,7 +13,7 @@ typedef std::vector<std::pair<unsigned int, unsigned int>> ParticleGraph;
 const glm::vec3 snakeColor = glm::vec3(0.2f, 0.6f, 0.2f);
 const glm::vec3 headColor = glm::vec3(0.4f, 0.8f, 0.2f); 
 const glm::vec3 foodColor = glm::vec3(1.f, 1.f, 1.f);
-const glm::vec3 bonusColor = glm::vec3(0.8f, 0.6f, 0.f);
+const glm::vec3 bonusColor = glm::vec3(0.619f, 0.05f, 0.25f);
 const glm::vec3 speedColor = glm::vec3(0.f, 1.f, 0.f);
 const glm::vec3 malusColor =  glm::vec3(0.f, 1.f, 0.f);
 

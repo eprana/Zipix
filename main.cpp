@@ -100,11 +100,11 @@ int main() {
 
     // // Ajout des particules
     int id = foodManager.addRandomParticle(1);
-    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
-    bonusManager.addParticle(1.5f, glm::vec2(-0.2, 0.6), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
-    bonusManager.addParticle(1.5f, glm::vec2(0.8, -0.7), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
-    bonusManager.addParticle(1.5f, glm::vec2(-0.7, -0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.8f, 0.6f, 0.f));
-    bonusManager.addParticle(1.5f, glm::vec2(0.3, -0.1), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(10.8f, 0.6f, 0.f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.5, 0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.619f, 0.05f, 0.25f));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.2, 0.6), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.619f, 0.05f, 0.25f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.8, -0.7), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.619f, 0.05f, 0.25f));
+    bonusManager.addParticle(1.5f, glm::vec2(-0.7, -0.5), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.619f, 0.05f, 0.25f));
+    bonusManager.addParticle(1.5f, glm::vec2(0.3, -0.1), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec3(0.619f, 0.05f, 0.25f));
 
     // Copy the food to the autoManager
     copyParticle(foodManager, autoManager, id);
